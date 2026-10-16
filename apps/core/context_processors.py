@@ -1,7 +1,7 @@
 """
 Encabezado: Procesador de contexto global para demo-sw (NORTE Studio).
 Inyecta en todas las plantillas los datos de la marca, umbral de envío gratis,
-categorías y colecciones para el menú de navegación y pie de página.
+categorías y colecciones para el menú de navegación y pie de página con manejo seguro de excepciones.
 """
 from django.conf import settings
 from apps.catalog.models import Category, Collection
@@ -17,9 +17,13 @@ def store_context(request):
     Returns:
         dict: Parámetros de marca y listados de categorías activas para el header.
     """
-    # Consulta de categorías activas ordenadas para el menú superior
-    categories = Category.objects.filter(is_active=True).order_by('order', 'name')
-    collections = Collection.objects.filter(is_active=True).order_by('-created_at')
+    try:
+        categories = list(Category.objects.filter(is_active=True).order_by('order', 'name'))
+        collections = list(Collection.objects.filter(is_active=True).order_by('-created_at'))
+    except Exception:
+        # En caso de que la base de datos se esté inicializando o migrando
+        categories = []
+        collections = []
 
     return {
         'STORE_BRAND_NAME': getattr(settings, 'STORE_BRAND_NAME', 'NORTE Studio'),

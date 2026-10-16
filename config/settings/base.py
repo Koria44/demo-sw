@@ -122,8 +122,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Configuración de compresión y caché de WhiteNoise
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Configuración de compresión y caché de WhiteNoise (robusto sin fallos por manifest estricto)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Archivos subidos por usuarios (imágenes de producto reales opcionales)
 MEDIA_URL = '/media/'
