@@ -1,0 +1,179 @@
+{# templates/cart/cart_detail.html #}
+{# Propósito: Vista de página completa de la bolsa de compras #}
+{# Espera: cart #}
+
+{% extends "base.html" %}
+
+{% block meta_title %}Bolsa de Compras // NORTE Studio{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 select-none">
+
+  <header class="mb-10 pb-6 border-b border-bone-dark flex items-center justify-between">
+    <div>
+      <span class="text-[10px] font-mono tracking-widest-caps uppercase text-dark-muted block">Tu Selección</span>
+      <h1 class="text-2xl sm:text-3xl font-bold uppercase tracking-widest-caps text-dark mt-1">
+        Bolsa de Compras ({{ cart.total_items }} prendas)
+      </h1>
+    </div>
+    {% if cart.total_items > 0 %}
+      <a href="{% url 'cart:cart_clear' %}" class="text-xs font-mono text-dark-muted hover:text-accent underline">
+        Vaciar bolsa
+      </a>
+    {% endif %}
+  </header>
+
+  {% if cart.total_items > 0 %}
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+
+      <!-- Tabla / Lista de Prendas -->
+      <div class="lg:col-span-8 space-y-6">
+
+        <!-- Barra de Despacho Gratuito -->
+        <div class="p-4 bg-bone-light border border-bone-dark">
+          <div class="text-xs font-mono tracking-wider uppercase text-dark mb-2">
+            {% if cart.qualifies_for_free_shipping %}
+              <span class="font-bold">¡FELICITACIONES!</span> TIENES DESPACHO GRATIS A TODO CHILE
+            {% else %}
+              TE FALTAN <span class="font-bold font-mono">{{ cart.formatted_remaining_for_free_shipping }}</span> PARA ENVÍO GRATUITO
+            {% endif %}
+          </div>
+          <div class="w-full bg-bone-dark/50 h-2">
+            <div class="h-full bg-dark transition-all duration-500" style="width: {{ cart.free_shipping_progress_percentage }}%;"></div>
+          </div>
+        </div>
+
+        <!-- Prendas -->
+        <div class="border border-bone-dark divide-y divide-bone-dark bg-bone-light">
+          {% for item in cart %}
+            <div class="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <!-- Imagen y Datos -->
+              <div class="flex items-center space-x-4">
+                <a href="{{ item.product.get_absolute_url }}" class="w-20 h-24 bg-bone-dark/50 flex-shrink-0 flex items-center justify-center border border-bone-subtle overflow-hidden">
+                  {% if item.has_image %}
+                    <img src="{{ item.image_url }}" alt="{{ item.name }}" class="w-full h-full object-cover">
+                  {% else %}
+                    <div class="w-12 h-14" style="color: {{ item.color_hex }}">
+                      {% include "partials/garment_svg.html" with type=item.garment_type color=item.color_hex view='front' %}
+                    </div>
+                  {% endif %}
+                </a>
+
+                <div class="space-y-1">
+                  <a href="{{ item.product.get_absolute_url }}" class="text-sm font-bold uppercase tracking-wider-label text-dark hover:underline">
+                    {{ item.name }}
+                  </a>
+                  <div class="text-xs font-mono text-dark-muted space-x-2">
+                    <span>Talla: <strong class="text-dark">{{ item.size }}</strong></span>
+                    <span>•</span>
+                    <span class="inline-flex items-center space-x-1">
+                      <span class="w-2.5 h-2.5 rounded-full inline-block border border-bone-subtle" style="background-color: {{ item.color_hex }}"></span>
+                      <span>{{ item.color_name }}</span>
+                    </span>
+                  </div>
+                  <span class="text-xs font-mono text-dark font-medium block">
+                    {{ item.formatted_price }} c/u
+                  </span>
+                </div>
+              </div>
+
+              <!-- Cantidad, Subtotal y Eliminar -->
+              <div class="flex items-center justify-between sm:space-x-8 pt-3 sm:pt-0 border-t sm:border-t-0 border-bone-dark">
+                <!-- Selector Cantidad -->
+                <form action="{% url 'cart:cart_update' %}" method="POST" class="inline-flex items-center border border-bone-dark bg-bone">
+                  {% csrf_token %}
+                  <input type="hidden" name="item_key" value="{{ item.item_key }}">
+                  <button type="submit" name="quantity" value="{{ item.quantity|add:'-1' }}" class="w-8 h-8 flex items-center justify-center text-xs hover:bg-bone-dark" aria-label="Restar 1">-</button>
+                  <span class="w-8 text-center text-xs font-mono font-medium">{{ item.quantity }}</span>
+                  <button type="submit" name="quantity" value="{{ item.quantity|add:'1' }}" class="w-8 h-8 flex items-center justify-center text-xs hover:bg-bone-dark" aria-label="Sumar 1">+</button>
+                </form>
+
+                <!-- Subtotal Línea -->
+                <span class="text-sm font-mono font-bold text-dark min-w-[80px] text-right">
+                  {{ item.formatted_line_total }}
+                </span>
+
+                <!-- Eliminar -->
+                <form action="{% url 'cart:cart_remove' %}" method="POST">
+                  {% csrf_token %}
+                  <input type="hidden" name="item_key" value="{{ item.item_key }}">
+                  <button type="submit" class="text-dark-muted hover:text-accent p-1" title="Eliminar del carro" aria-label="Eliminar ítem">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                  </button>
+                </form>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Resumen de Pedido y Checkout -->
+      <div class="lg:col-span-4 bg-bone-light border border-bone-dark p-6 space-y-6">
+        <h2 class="text-xs font-bold uppercase tracking-wider-label text-dark border-b border-bone-dark pb-3">
+          Resumen de Compra
+        </h2>
+
+        <div class="space-y-2 text-xs">
+          <div class="flex justify-between text-dark-muted">
+            <span>Subtotal de prendas:</span>
+            <span class="font-mono text-dark font-medium">{{ cart.formatted_subtotal }}</span>
+          </div>
+          <div class="flex justify-between text-dark-muted">
+            <span>Costo de despacho:</span>
+            <span class="font-mono text-dark font-medium">{{ cart.formatted_shipping_cost }}</span>
+          </div>
+          <div class="flex justify-between text-base font-bold text-dark pt-3 border-t border-bone-dark">
+            <span class="uppercase tracking-wider-label">Total a Pagar (CLP):</span>
+            <span class="font-mono">{{ cart.formatted_total }}</span>
+          </div>
+        </div>
+
+        <a href="{% url 'orders:checkout' %}" class="btn-primary w-full text-center">
+          Continuar al Checkout
+        </a>
+
+        <div class="pt-4 border-t border-bone-dark text-[11px] text-dark-muted space-y-2">
+          <p class="flex items-center space-x-1.5">
+            <svg class="w-3.5 h-3.5 text-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span>Despacho a todo Chile (Starken, Blue Express)</span>
+          </p>
+          <p class="flex items-center space-x-1.5">
+            <svg class="w-3.5 h-3.5 text-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span>30 días para cambio de talla sin costo</span>
+          </p>
+          <p class="flex items-center space-x-1.5">
+            <svg class="w-3.5 h-3.5 text-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span>Pago seguro Webpay Plus / Transferencia</span>
+          </p>
+        </div>
+      </div>
+
+    </div>
+  {% else %}
+    <div class="py-24 text-center space-y-4 bg-bone-light border border-bone-dark max-w-lg mx-auto p-8">
+      <div class="w-16 h-16 mx-auto text-dark-muted/40">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/>
+        </svg>
+      </div>
+      <h2 class="text-base font-bold uppercase tracking-wider-label text-dark">Tu bolsa de compras está vacía</h2>
+      <p class="text-xs text-dark-muted">No has añadido ninguna prenda aún. Revisa nuestros básicos de alto gramaje.</p>
+      <div class="pt-4">
+        <a href="{% url 'catalog:product_list' %}" class="btn-primary">
+          Explorar Catálogo
+        </a>
+      </div>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

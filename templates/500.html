@@ -1,0 +1,29 @@
+{# templates/500.html #}
+{# Propósito: Página de error 500 para errores internos del servidor #}
+
+{% extends "base.html" %}
+
+{% block meta_title %}Error del Servidor (500) // NORTE Studio{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-24 text-center select-none space-y-6">
+  <div class="w-16 h-16 mx-auto text-dark-muted/40">
+    {% include "partials/favicon_icon_svg.html" %}
+  </div>
+
+  <span class="text-xs font-mono tracking-widest-caps uppercase text-dark-muted block">Error 500 // Incidencia Técnica</span>
+  <h1 class="text-3xl font-bold uppercase tracking-widest-caps text-dark">
+    Interrupción en el Taller
+  </h1>
+  <p class="text-xs sm:text-sm text-dark-muted max-w-md mx-auto">
+    Ocurrió un error inesperado al procesar tu solicitud. Nuestro equipo técnico ya ha sido notificado.
+  </p>
+
+  <div class="pt-6">
+    <a href="{% url 'core:home' %}" class="btn-primary">
+      Regresar al Inicio
+    </a>
+  </div>
+</div>
+{% endblock %}

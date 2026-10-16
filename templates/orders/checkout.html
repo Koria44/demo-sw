@@ -1,0 +1,201 @@
+{# templates/orders/checkout.html #}
+{# Propósito: Formulario de checkout simulado con validación de datos de despacho en Chile (RUT, Región, Comuna) #}
+{# Espera: form, cart #}
+
+{% extends "base.html" %}
+
+{% block meta_title %}Finalizar Compra // NORTE Studio Chile{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 select-none">
+
+  <!-- Encabezado -->
+  <header class="mb-10 pb-6 border-b border-bone-dark">
+    <span class="text-[10px] font-mono tracking-widest-caps uppercase text-dark-muted block">Paso Final</span>
+    <h1 class="text-2xl sm:text-3xl font-bold uppercase tracking-widest-caps text-dark mt-1">
+      Despacho y Pago
+    </h1>
+  </header>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+
+    <!-- COLUMNA IZQUIERDA: FORMULARIO DE DESPACHO EN CHILE -->
+    <div class="lg:col-span-7 space-y-8">
+      <form method="POST" action="{% url 'orders:checkout' %}" class="space-y-8">
+        {% csrf_token %}
+
+        <!-- 1. Datos Personales -->
+        <div class="space-y-4">
+          <h2 class="text-xs font-bold uppercase tracking-wider-label text-dark border-b border-bone-dark pb-2">
+            1. Datos de Contacto
+          </h2>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="{{ form.first_name.id_for_label }}" class="block text-[11px] font-mono uppercase text-dark-muted mb-1">Nombres *</label>
+              {{ form.first_name }}
+              {% if form.first_name.errors %}
+                <p class="text-[10px] text-accent mt-1">{{ form.first_name.errors.0 }}</p>
+              {% endif %}
+            </div>
+
+            <div>
+              <label for="{{ form.last_name.id_for_label }}" class="block text-[11px] font-mono uppercase text-dark-muted mb-1">Apellidos *</label>
+              {{ form.last_name }}
+              {% if form.last_name.errors %}
+                <p class="text-[10px] text-accent mt-1">{{ form.last_name.errors.0 }}</p>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="{{ form.email.id_for_label }}" class="block text-[11px] font-mono uppercase text-dark-muted mb-1">Correo Electrónico *</label>
+              {{ form.email }}
+              {% if form.email.errors %}
+                <p class="text-[10px] text-accent mt-1">{{ form.email.errors.0 }}</p>
+              {% endif %}
+            </div>
+
+            <div>
+              <label for="{{ form.phone.id_for_label }}" class="block text-[11px] font-mono uppercase text-dark-muted mb-1">Teléfono Móvil *</label>
+              {{ form.phone }}
+              {% if form.phone.errors %}
+                <p class="text-[10px] text-accent mt-1">{{ form.phone.errors.0 }}</p>
+              {% endif %}
+            </div>
+          </div>
+
+          <div>
+            <label for="{{ form.rut.id_for_label }}" class="block text-[11px] font-mono uppercase text-dark-muted mb-1">RUT del Destinatario * (ej: 12.345.678-9)</label>
+            {{ form.rut }}
+            {% if form.rut.errors %}
+              <p class="text-[10px] text-accent mt-1">{{ form.rut.errors.0 }}</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- 2. Dirección de Entrega en Chile -->
+        <div class="space-y-4">
+          <h2 class="text-xs font-bold uppercase tracking-wider-label text-dark border-b border-bone-dark pb-2">
+            2. Dirección de Despacho
+          </h2>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="{{ form.region.id_for_label }}" class="block text-[11px] font-mono uppercase text-dark-muted mb-1">Región de Chile *</label>
+              {{ form.region }}
+              {% if form.region.errors %}
+                <p class="text-[10px] text-accent mt-1">{{ form.region.errors.0 }}</p>
+              {% endif %}
+            </div>
+
+            <div>
+              <label for="{{ form.comuna.id_for_label }}" class="block text-[11px] font-mono uppercase text-dark-muted mb-1">Comuna * (ej: Providencia, Viña del Mar)</label>
+              {{ form.comuna }}
+              {% if form.comuna.errors %}
+                <p class="text-[10px] text-accent mt-1">{{ form.comuna.errors.0 }}</p>
+              {% endif %}
+            </div>
+          </div>
+
+          <div>
+            <label for="{{ form.address_line.id_for_label }}" class="block text-[11px] font-mono uppercase text-dark-muted mb-1">Calle y Número *</label>
+            {{ form.address_line }}
+            {% if form.address_line.errors %}
+              <p class="text-[10px] text-accent mt-1">{{ form.address_line.errors.0 }}</p>
+            {% endif %}
+          </div>
+
+          <div>
+            <label for="{{ form.apartment_or_office.id_for_label }}" class="block text-[11px] font-mono uppercase text-dark-muted mb-1">Depto / Casa / Oficina (Opcional)</label>
+            {{ form.apartment_or_office }}
+          </div>
+
+          <div>
+            <label for="{{ form.delivery_notes.id_for_label }}" class="block text-[11px] font-mono uppercase text-dark-muted mb-1">Instrucciones de Entrega (Opcional)</label>
+            {{ form.delivery_notes }}
+          </div>
+        </div>
+
+        <!-- 3. Método de Pago Simulado -->
+        <div class="space-y-4">
+          <h2 class="text-xs font-bold uppercase tracking-wider-label text-dark border-b border-bone-dark pb-2">
+            3. Método de Pago
+          </h2>
+
+          <div class="space-y-2 p-4 bg-bone-light border border-bone-dark text-xs">
+            {% for radio in form.payment_method %}
+              <label class="flex items-center space-x-3 cursor-pointer py-1.5">
+                {{ radio.tag }}
+                <span class="font-medium text-dark uppercase tracking-wider-label text-[11px]">{{ radio.choice_label }}</span>
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          class="btn-primary w-full py-4 text-xs font-bold tracking-widest-caps shadow-md"
+        >
+          Confirmar y Realizar Pedido (Simulación)
+        </button>
+      </form>
+    </div>
+
+    <!-- COLUMNA DERECHA: RESUMEN DE LA ORDEN -->
+    <div class="lg:col-span-5 bg-bone-light border border-bone-dark p-6 space-y-6">
+      <h2 class="text-xs font-bold uppercase tracking-wider-label text-dark border-b border-bone-dark pb-3">
+        Resumen de la Orden ({{ cart.total_items }} prendas)
+      </h2>
+
+      <!-- Lista de Ítems Comprados -->
+      <div class="divide-y divide-bone-dark max-h-80 overflow-y-auto">
+        {% for item in cart %}
+          <div class="py-3 flex items-center justify-between text-xs">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-12 bg-bone-dark/50 flex-shrink-0 flex items-center justify-center border border-bone-subtle overflow-hidden">
+                {% if item.has_image %}
+                  <img src="{{ item.image_url }}" alt="{{ item.name }}" class="w-full h-full object-cover">
+                {% else %}
+                  <div class="w-6 h-8" style="color: {{ item.color_hex }}">
+                    {% include "partials/garment_svg.html" with type=item.garment_type color=item.color_hex view='front' %}
+                  </div>
+                {% endif %}
+              </div>
+              <div>
+                <span class="font-semibold text-dark uppercase block">{{ item.name }}</span>
+                <span class="text-[10px] font-mono text-dark-muted">Talla {{ item.size }} • {{ item.color_name }} • Cant: {{ item.quantity }}</span>
+              </div>
+            </div>
+            <span class="font-mono font-medium text-dark">{{ item.formatted_line_total }}</span>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Desglose de Precios -->
+      <div class="space-y-2 pt-4 border-t border-bone-dark text-xs">
+        <div class="flex justify-between text-dark-muted">
+          <span>Subtotal prendas:</span>
+          <span class="font-mono text-dark">{{ cart.formatted_subtotal }}</span>
+        </div>
+        <div class="flex justify-between text-dark-muted">
+          <span>Despacho:</span>
+          <span class="font-mono text-dark">{{ cart.formatted_shipping_cost }}</span>
+        </div>
+        <div class="flex justify-between text-base font-bold text-dark pt-3 border-t border-bone-dark">
+          <span class="uppercase tracking-wider-label">Total a Cancelar (CLP):</span>
+          <span class="font-mono">{{ cart.formatted_total }}</span>
+        </div>
+      </div>
+
+      <div class="p-3 bg-bone border border-bone-dark text-[10px] font-mono text-dark-muted space-y-1">
+        <p>🔒 Transacción segura con encriptación SSL.</p>
+        <p>📦 Despacho con código de seguimiento en tiempo real vía Starken o Blue Express.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

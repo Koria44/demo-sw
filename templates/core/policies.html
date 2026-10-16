@@ -1,0 +1,114 @@
+{# templates/core/policies.html #}
+{# Propósito: Políticas de despacho en Chile, cambios, devoluciones y tabla técnica de medidas/tallas #}
+
+{% extends "base.html" %}
+
+{% block meta_title %}Políticas de Despacho y Cambios // NORTE Studio Chile{% endblock %}
+{% block meta_description %}Conoce los plazos de despacho de NORTE Studio a todo Chile, política de 30 días para cambios de talla y tabla de medidas en centímetros.{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 select-none">
+
+  <header class="mb-12 pb-6 border-b border-bone-dark">
+    <span class="text-[10px] font-mono tracking-widest-caps uppercase text-dark-muted block">Garantía y Logística</span>
+    <h1 class="text-3xl sm:text-4xl font-bold uppercase tracking-widest-caps text-dark mt-1">
+      Despachos y Devoluciones
+    </h1>
+    <p class="text-xs sm:text-sm text-dark-muted mt-2">
+      Información clara sobre tiempos de entrega en Chile, costos, política de cambio y guía de medidas.
+    </p>
+  </header>
+
+  <div class="space-y-12 text-xs sm:text-sm text-dark-muted leading-relaxed">
+
+    <!-- 1. Envíos y Despachos -->
+    <section class="space-y-4">
+      <h2 class="text-base font-bold uppercase tracking-wider-label text-dark border-b border-bone-dark pb-2">
+        1. Despachos a Todo Chile
+      </h2>
+      <p>
+        Operamos con logística integrada a nivel nacional utilizando <strong>Blue Express</strong>, <strong>Starken</strong> y <strong>Chilexpress</strong>.
+      </p>
+      <ul class="list-disc pl-5 space-y-2">
+        <li><strong>Región Metropolitana:</strong> Entregas en 24 a 48 horas hábiles siguientes a la confirmación de la orden.</li>
+        <li><strong>Regiones (Zona Norte y Centro-Sur):</strong> 2 a 4 días hábiles según la comuna de destino.</li>
+        <li><strong>Zonas Extremas (Aysén, Magallanes, Arica):</strong> 4 a 7 días hábiles vía transporte aéreo o terrestre prioritario.</li>
+        <li><strong>Despacho Gratuito:</strong> Aplicable de forma automática para toda compra igual o superior a <strong>$70.000 CLP</strong>. En compras menores, el valor fijo es de $3.990 CLP a todo el país.</li>
+      </ul>
+    </section>
+
+    <!-- 2. Cambios y Devoluciones -->
+    <section class="space-y-4">
+      <h2 class="text-base font-bold uppercase tracking-wider-label text-dark border-b border-bone-dark pb-2">
+        2. Garantía de Calce y 30 Días para Cambios
+      </h2>
+      <p>
+        Queremos que tu prenda calce exactamente como buscas. Dispones de <strong>30 días corridos</strong> desde la recepción del paquete para solicitar un cambio de talla o color sin costo de gestión.
+      </p>
+      <div class="p-4 bg-bone-light border border-bone-dark text-xs space-y-1 font-mono">
+        <p><strong>Requisitos:</strong></p>
+        <p>• La prenda debe estar sin uso, sin lavar y con sus etiquetas originales intactas.</p>
+        <p>• Escríbenos a <a href="mailto:{{ STORE_CONTACT_EMAIL }}" class="underline text-dark font-bold">{{ STORE_CONTACT_EMAIL }}</a> indicando tu número de pedido.</p>
+      </div>
+    </section>
+
+    <!-- 3. Guía de Tallas (Medidas en cm) -->
+    <section id="guia-tallas" class="space-y-4 pt-4">
+      <h2 class="text-base font-bold uppercase tracking-wider-label text-dark border-b border-bone-dark pb-2">
+        3. Guía de Medidas y Fit (cm)
+      </h2>
+      <p>
+        Nuestras prendas tienen silueta <em>Boxy</em> y <em>Oversized</em>. Si prefieres un calce regular ajustado, te recomendamos elegir una talla menos a tu habitual.
+      </p>
+
+      <!-- Tabla Hoodies -->
+      <div class="space-y-2 pt-2">
+        <h3 class="text-xs font-bold uppercase tracking-wider-label text-dark">Hoodies Heavyweight (cm)</h3>
+        <div class="overflow-x-auto border border-bone-dark">
+          <table class="w-full text-left text-xs font-mono">
+            <thead class="bg-dark text-bone text-[11px] uppercase">
+              <tr>
+                <th class="p-3">Talla</th>
+                <th class="p-3">Ancho Pecho</th>
+                <th class="p-3">Largo Total</th>
+                <th class="p-3">Manga (desde hombro)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-bone-dark bg-bone-light">
+              <tr><td class="p-3 font-bold">S</td><td class="p-3">58 cm</td><td class="p-3">67 cm</td><td class="p-3">60 cm</td></tr>
+              <tr><td class="p-3 font-bold">M</td><td class="p-3">62 cm</td><td class="p-3">70 cm</td><td class="p-3">62 cm</td></tr>
+              <tr><td class="p-3 font-bold">L</td><td class="p-3">66 cm</td><td class="p-3">73 cm</td><td class="p-3">64 cm</td></tr>
+              <tr><td class="p-3 font-bold">XL</td><td class="p-3">70 cm</td><td class="p-3">76 cm</td><td class="p-3">66 cm</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tabla Poleras Boxy -->
+      <div class="space-y-2 pt-4">
+        <h3 class="text-xs font-bold uppercase tracking-wider-label text-dark">Poleras Boxy Fit 260 GSM (cm)</h3>
+        <div class="overflow-x-auto border border-bone-dark">
+          <table class="w-full text-left text-xs font-mono">
+            <thead class="bg-dark text-bone text-[11px] uppercase">
+              <tr>
+                <th class="p-3">Talla</th>
+                <th class="p-3">Ancho Pecho</th>
+                <th class="p-3">Largo Total</th>
+                <th class="p-3">Cuello (Rib)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-bone-dark bg-bone-light">
+              <tr><td class="p-3 font-bold">S</td><td class="p-3">56 cm</td><td class="p-3">69 cm</td><td class="p-3">3.0 cm</td></tr>
+              <tr><td class="p-3 font-bold">M</td><td class="p-3">60 cm</td><td class="p-3">72 cm</td><td class="p-3">3.0 cm</td></tr>
+              <tr><td class="p-3 font-bold">L</td><td class="p-3">64 cm</td><td class="p-3">75 cm</td><td class="p-3">3.0 cm</td></tr>
+              <tr><td class="p-3 font-bold">XL</td><td class="p-3">68 cm</td><td class="p-3">78 cm</td><td class="p-3">3.0 cm</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+</div>
+{% endblock %}

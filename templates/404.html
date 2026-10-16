@@ -1,0 +1,45 @@
+{# templates/404.html #}
+{# Propósito: Página de error 404 personalizada y útil con enlaces directos a categorías y catálogo #}
+
+{% extends "base.html" %}
+
+{% block meta_title %}Página No Encontrada (404) // NORTE Studio{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 py-24 text-center select-none space-y-6">
+  <div class="w-16 h-16 mx-auto text-dark-muted/40">
+    {% include "partials/favicon_icon_svg.html" %}
+  </div>
+
+  <span class="text-xs font-mono tracking-widest-caps uppercase text-dark-muted block">Error 404 // URL No Encontrada</span>
+  <h1 class="text-3xl sm:text-4xl font-bold uppercase tracking-widest-caps text-dark">
+    Esta prenda no está en el perchero
+  </h1>
+  <p class="text-xs sm:text-sm text-dark-muted max-w-md mx-auto">
+    La ruta que buscas pudo haber sido trasladada a una nueva colección o ya no existe. Explora nuestras siluetas activas:
+  </p>
+
+  <!-- Enlaces útiles a categorías -->
+  <div class="flex flex-wrap items-center justify-center gap-3 pt-4">
+    <a href="{% url 'catalog:product_list' %}" class="btn-primary">
+      Catálogo Completo
+    </a>
+    <a href="{% url 'catalog:category_detail' category_slug='hoodies' %}" class="btn-secondary">
+      Hoodies Heavyweight
+    </a>
+    <a href="{% url 'catalog:category_detail' category_slug='poleras' %}" class="btn-secondary">
+      Poleras Boxy
+    </a>
+    <a href="{% url 'catalog:category_detail' category_slug='pantalones' %}" class="btn-secondary">
+      Pantalones Baggy
+    </a>
+  </div>
+
+  <div class="pt-8">
+    <a href="{% url 'core:home' %}" class="btn-link text-xs">
+      &larr; Volver a la Portada
+    </a>
+  </div>
+</div>
+{% endblock %}

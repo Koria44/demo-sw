@@ -1,0 +1,84 @@
+{# templates/core/about.html #}
+{# Propósito: Página editorial 'Conócenos': manifiesto de taller, gramaje de telas y producción en Chile #}
+
+{% extends "base.html" %}
+
+{% block meta_title %}Conócenos // Manifiesto de Taller // NORTE Studio{% endblock %}
+{% block meta_description %}Conoce el taller de NORTE Studio en Santiago de Chile. Confección de ropa streetwear de 450 y 500 GSM con algodón peinado pesado y cortes contemporáneos.{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 select-none">
+
+  <!-- Encabezado Editorial -->
+  <header class="mb-12 pb-6 border-b border-bone-dark text-center sm:text-left">
+    <span class="text-[10px] font-mono tracking-widest-caps uppercase text-dark-muted block">Manifiesto de Marca</span>
+    <h1 class="text-3xl sm:text-5xl font-bold uppercase tracking-widest-caps text-dark mt-2">
+      Conócenos
+    </h1>
+    <p class="text-sm text-dark-muted mt-3 max-w-xl">
+      Nacidos en Santiago de Chile bajo la premisa de confeccionar básicos urbanos de peso contundente, siluetas limpias y durabilidad real.
+    </p>
+  </header>
+
+  <!-- Contenido Editorial -->
+  <article class="space-y-12 text-xs sm:text-sm text-dark-muted leading-relaxed">
+
+    <!-- Sección 1: El Origen -->
+    <section class="space-y-4">
+      <h2 class="text-base sm:text-lg font-bold uppercase tracking-wider-label text-dark border-b border-bone-dark pb-2">
+        1. La Obsesión por el Gramaje
+      </h2>
+      <p>
+        NORTE Studio surge en respuesta a la saturación de prendas desechables y telas delgadas que abundaban en el mercado local. Nos propusimos diseñar ropa con presencia física: que al levantar un polerón sientas de inmediato el peso del algodón peinado de 450 o 500 GSM.
+      </p>
+      <p>
+        Creemos que el verdadero streetwear no necesita logotipos gigantes para destacar. La calidad de la frisa, la rigidez natural de una capucha doble y la caída limpia de un hombro caído hablan con suficiente fuerza por sí solos.
+      </p>
+    </section>
+
+    <!-- Sección 2: El Taller en Chile -->
+    <section class="space-y-4">
+      <h2 class="text-base sm:text-lg font-bold uppercase tracking-wider-label text-dark border-b border-bone-dark pb-2">
+        2. Taller y Cadena de Suministro
+      </h2>
+      <p>
+        Trabajamos mano a mano con talleres de confección y tintorerías en la Región Metropolitana. Seleccionamos hilados de algodón peinado de fibra larga, tejemos nuestras propias telas con galgas pesadas y aplicamos procesos de teñido en prenda (garment dye) que logran tonalidades mate sobrias como carbón, chocolate profundo y oliva militar.
+      </p>
+    </section>
+
+    <!-- Métricas del Estudio -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 p-6 bg-bone-light border border-bone-dark text-center font-mono">
+      <div>
+        <span class="text-3xl font-bold text-dark block">450 GSM</span>
+        <span class="text-[10px] uppercase text-dark-muted">Gramaje mínimo en felpas</span>
+      </div>
+      <div>
+        <span class="text-3xl font-bold text-dark block">100%</span>
+        <span class="text-[10px] uppercase text-dark-muted">Algodón Peinado</span>
+      </div>
+      <div>
+        <span class="text-3xl font-bold text-dark block">Santiago</span>
+        <span class="text-[10px] uppercase text-dark-muted">Diseño y Ensamble</span>
+      </div>
+    </div>
+
+    <!-- Sección 3: Compromiso de Durabilidad -->
+    <section class="space-y-4">
+      <h2 class="text-base sm:text-lg font-bold uppercase tracking-wider-label text-dark border-b border-bone-dark pb-2">
+        3. Cuidados y Longevidad
+      </h2>
+      <p>
+        Cada costura está reforzada con puntadas de tres hilos y las pretinas cuentan con elásticos de alta memoria. Si cuidas tu prenda lavándola al revés con agua fría y secándola a la sombra, mantendrá su estructura y tacto sólido durante años.
+      </p>
+    </section>
+
+    <div class="pt-6 border-t border-bone-dark text-center">
+      <a href="{% url 'catalog:product_list' %}" class="btn-primary">
+        Descubrir la Colección
+      </a>
+    </div>
+
+  </article>
+
+</div>
+{% endblock %}

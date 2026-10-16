@@ -1,0 +1,258 @@
+{# templates/catalog/product_list.html #}
+{# Propósito: Listado principal de catálogo de ropa streetwear con filtros por categoría, #}
+{# colección, talla, color, precio en CLP, ordenamiento y paginación SEO accesible #}
+{# Espera: products, current_category, current_collection, categories, collections, size_choices, color_choices #}
+
+{% extends "base.html" %}
+
+{% block meta_title %}
+  {% if current_category %}
+    {{ current_category.name }} // NORTE Studio Streetwear Chile
+  {% elif current_collection %}
+    {{ current_collection.name }} // Drop Oficial NORTE Studio
+  {% elif is_search_page %}
+    Resultados para "{{ search_query }}" // NORTE Studio
+  {% else %}
+    Catálogo Completo // Ropa Streetwear de Alto Gramaje en Chile
+  {% endif %}
+{% endblock %}
+
+{% block meta_description %}
+  {% if current_category %}
+    Descubre nuestra colección de {{ current_category.name|lower }}. {{ current_category.description|default:'Prendas de alto gramaje con calce limpio en Chile.' }}
+  {% else %}
+    Explora hoodies de 450 GSM, poleras boxy fit de 260 GSM y pantalones baggy. Envíos gratis a todo Chile sobre $70.000 CLP.
+  {% endif %}
+{% endblock %}
+
+{% block schema_jsonld %}
+{{ block.super }}
+<!-- BreadcrumbList Schema para Google Search -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Inicio",
+      "item": "{{ request.scheme }}://{{ request.get_host }}/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Catálogo",
+      "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'catalog:product_list' %}"
+    }
+    {% if current_category %}
+    ,{
+      "@type": "ListItem",
+      "position": 3,
+      "name": "{{ current_category.name }}",
+      "item": "{{ request.scheme }}://{{ request.get_host }}{{ current_category.get_absolute_url }}"
+    }
+    {% endif %}
+  ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 select-none">
+
+  <!-- ======================================================================== -->
+  <!-- NAVEGACIÓN DE MIGAS DE PAN (BREADCRUMBS) -->
+  <!-- ======================================================================== -->
+  <nav aria-label="Migas de pan" class="mb-6">
+    <ol class="flex items-center space-x-2 text-[10px] font-mono tracking-wider uppercase text-dark-muted">
+      <li>
+        <a href="{% url 'core:home' %}" class="hover:text-dark">Inicio</a>
+      </li>
+      <li>/</li>
+      <li>
+        <a href="{% url 'catalog:product_list' %}" class="{% if not current_category and not current_collection and not is_search_page %}text-dark font-bold{% else %}hover:text-dark{% endif %}">
+          Catálogo
+        </a>
+      </li>
+      {% if current_category %}
+        <li>/</li>
+        <li class="text-dark font-bold" aria-current="page">{{ current_category.name }}</li>
+      {% elif current_collection %}
+        <li>/</li>
+        <li class="text-dark font-bold" aria-current="page">{{ current_collection.name }}</li>
+      {% elif is_search_page %}
+        <li>/</li>
+        <li class="text-dark font-bold" aria-current="page">Búsqueda: "{{ search_query }}"</li>
+      {% endif %}
+    </ol>
+  </nav>
+
+  <!-- ======================================================================== -->
+  <!-- ENCABEZADO EDITORIAL DE LA PÁGINA -->
+  <!-- ======================================================================== -->
+  <header class="mb-10 pb-6 border-b border-bone-dark">
+    <h1 class="text-2xl sm:text-4xl font-bold uppercase tracking-widest-caps text-dark">
+      {% if current_category %}
+        {{ current_category.name }}
+      {% elif current_collection %}
+        {{ current_collection.name }}
+      {% elif is_search_page %}
+        Búsqueda: "{{ search_query }}"
+      {% else %}
+        Catálogo Completo
+      {% endif %}
+    </h1>
+    <p class="text-xs sm:text-sm text-dark-muted mt-2 max-w-2xl">
+      {% if current_category %}
+        {{ current_category.description|default:current_category.tagline }}
+      {% elif current_collection %}
+        {{ current_collection.description|default:current_collection.tagline }}
+      {% else %}
+        Prendas urbanas confeccionadas con hilados densos y siluetas contemporáneas. {{ total_count }} prendas disponibles.
+      {% endif %}
+    </p>
+  </header>
+
+  <!-- ======================================================================== -->
+  <!-- BARRA DE FILTROS Y ORDENAMIENTO -->
+  <!-- ======================================================================== -->
+  <section class="mb-8 p-4 bg-bone-light border border-bone-dark space-y-4" aria-label="Filtros del catálogo">
+    <!-- Fila 1: Pestañas Rápidas de Categoría -->
+    <div class="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none text-xs uppercase tracking-wider-label font-semibold">
+      <a
+        href="{% url 'catalog:product_list' %}"
+        class="px-3 py-1.5 border {% if not current_category %}bg-dark text-bone border-dark{% else %}bg-bone text-dark border-bone-subtle hover:border-dark{% endif %} transition-colors whitespace-nowrap"
+      >
+        Todas
+      </a>
+      {% for cat in categories %}
+        <a
+          href="{{ cat.get_absolute_url }}"
+          class="px-3 py-1.5 border {% if current_category.slug == cat.slug %}bg-dark text-bone border-dark{% else %}bg-bone text-dark border-bone-subtle hover:border-dark{% endif %} transition-colors whitespace-nowrap"
+        >
+          {{ cat.name }}
+        </a>
+      {% endfor %}
+    </div>
+
+    <!-- Fila 2: Formulario de Filtros de Talla, Color y Orden -->
+    <form method="GET" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3 pt-2 border-t border-bone-dark/50 text-xs">
+      <!-- Filtro Talla -->
+      <div>
+        <label for="filter-talla" class="block text-[10px] font-mono text-dark-muted uppercase mb-1">Talla</label>
+        <select
+          id="filter-talla"
+          name="talla"
+          onchange="this.form.submit()"
+          class="w-full bg-bone border border-bone-dark text-xs text-dark py-2 px-3 focus:outline-none focus:border-dark"
+        >
+          <option value="">Todas las tallas</option>
+          {% for val, label in size_choices %}
+            <option value="{{ val }}" {% if selected_size == val %}selected{% endif %}>{{ val }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Filtro Color -->
+      <div>
+        <label for="filter-color" class="block text-[10px] font-mono text-dark-muted uppercase mb-1">Familia de Color</label>
+        <select
+          id="filter-color"
+          name="color"
+          onchange="this.form.submit()"
+          class="w-full bg-bone border border-bone-dark text-xs text-dark py-2 px-3 focus:outline-none focus:border-dark"
+        >
+          <option value="">Todos los colores</option>
+          {% for val, label in color_choices %}
+            <option value="{{ val }}" {% if selected_color == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Filtro Orden -->
+      <div>
+        <label for="filter-orden" class="block text-[10px] font-mono text-dark-muted uppercase mb-1">Ordenar por</label>
+        <select
+          id="filter-orden"
+          name="orden"
+          onchange="this.form.submit()"
+          class="w-full bg-bone border border-bone-dark text-xs text-dark py-2 px-3 focus:outline-none focus:border-dark"
+        >
+          <option value="recientes" {% if selected_order == 'recientes' %}selected{% endif %}>Más recientes</option>
+          <option value="precio_asc" {% if selected_order == 'precio_asc' %}selected{% endif %}>Precio: Menor a Mayor</option>
+          <option value="precio_desc" {% if selected_order == 'precio_desc' %}selected{% endif %}>Precio: Mayor a Menor</option>
+          <option value="populares" {% if selected_order == 'populares' %}selected{% endif %}>Más populares</option>
+        </select>
+      </div>
+
+      <!-- Botón Limpiar Filtros -->
+      <div class="col-span-2 sm:col-span-1 flex items-end">
+        <a
+          href="{% if current_category %}{{ current_category.get_absolute_url }}{% elif current_collection %}{{ current_collection.get_absolute_url }}{% else %}{% url 'catalog:product_list' %}{% endif %}"
+          class="w-full text-center py-2 px-3 border border-bone-dark text-[11px] font-mono uppercase text-dark-muted hover:text-dark hover:border-dark transition-colors"
+        >
+          Limpiar
+        </a>
+      </div>
+    </form>
+  </section>
+
+  <!-- ======================================================================== -->
+  <!-- GRILLA DE PRODUCTOS RESPONSIVE (2 Móvil, 3 Tablet, 4 Desktop) -->
+  <!-- ======================================================================== -->
+  <section aria-label="Prendas de vestir">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+      {% for product in products %}
+        {% include "partials/product_card.html" with product=product %}
+      {% empty %}
+        <div class="col-span-full py-24 text-center space-y-4 bg-bone-light border border-bone-dark">
+          <p class="text-sm font-bold uppercase tracking-wider-label text-dark">No se encontraron prendas con estos filtros</p>
+          <p class="text-xs text-dark-muted">Intenta restablecer las tallas o colores seleccionados para ver más resultados.</p>
+          <div class="pt-2">
+            <a href="{% url 'catalog:product_list' %}" class="btn-primary">
+              Restablecer Filtros
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- ======================================================================== -->
+  <!-- PAGINACIÓN ACCESIBLE Y SEO (rel="next" y rel="prev") -->
+  <!-- ======================================================================== -->
+  {% if is_paginated %}
+    <nav aria-label="Navegación de páginas" class="mt-16 pt-8 border-t border-bone-dark flex items-center justify-between text-xs font-mono uppercase">
+      <div>
+        {% if page_obj.has_previous %}
+          <a
+            href="?page={{ page_obj.previous_page_number }}{% if selected_size %}&talla={{ selected_size }}{% endif %}{% if selected_color %}&color={{ selected_color }}{% endif %}{% if selected_order %}&orden={{ selected_order }}{% endif %}"
+            rel="prev"
+            class="btn-secondary py-2.5 px-4 text-xs"
+          >
+            &larr; Anterior
+          </a>
+        {% endif %}
+      </div>
+
+      <span class="text-dark-muted">
+        Página <strong class="text-dark">{{ page_obj.number }}</strong> de <strong class="text-dark">{{ page_obj.paginator.num_pages }}</strong>
+      </span>
+
+      <div>
+        {% if page_obj.has_next %}
+          <a
+            href="?page={{ page_obj.next_page_number }}{% if selected_size %}&talla={{ selected_size }}{% endif %}{% if selected_color %}&color={{ selected_color }}{% endif %}{% if selected_order %}&orden={{ selected_order }}{% endif %}"
+            rel="next"
+            class="btn-secondary py-2.5 px-4 text-xs"
+          >
+            Siguiente &rarr;
+          </a>
+        {% endif %}
+      </div>
+    </nav>
+  {% endif %}
+
+</div>
+{% endblock %}

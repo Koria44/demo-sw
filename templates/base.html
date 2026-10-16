@@ -1,0 +1,150 @@
+{# templates/base.html #}
+{# Propósito: Plantilla maestra que define la estructura HTML5 semántica, metadatos SEO para Chile, #}
+{# tipografías, componentes globales (header, footer, drawers) y datos estructurados JSON-LD. #}
+{% load static %}
+<!DOCTYPE html>
+<html lang="es-CL" class="h-full bg-bone text-dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <!-- ==================================================================== -->
+  <!-- Metadatos SEO Primarios -->
+  <!-- ==================================================================== -->
+  <title>{% block meta_title %}NORTE Studio // Ropa Streetwear de Alto Gramaje en Chile{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Tienda streetwear chilena especializada en hoodies de 450 GSM, poleras boxy fit y cortes contemporáneos. Despacho a todo Chile.{% endblock %}">
+  <link rel="canonical" href="{% block canonical_url %}{{ request.build_absolute_uri }}{% endblock %}">
+  <meta name="robots" content="{% block meta_robots %}index, follow{% endblock %}">
+  <meta name="theme-color" content="#111111">
+
+  <!-- ==================================================================== -->
+  <!-- Open Graph / Redes Sociales (Facebook, WhatsApp, LinkedIn) -->
+  <!-- ==================================================================== -->
+  <meta property="og:site_name" content="{{ STORE_BRAND_NAME }}">
+  <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+  <meta property="og:locale" content="es_CL">
+  <meta property="og:title" content="{% block og_title %}NORTE Studio // Streetwear Chileno de Alto Gramaje{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Prendas de silueta cuadrada, algodón peinado pesado y confección limpia. Despacho gratuito sobre $70.000 CLP.{% endblock %}">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/og-image.svg' %}{% endblock %}">
+
+  <!-- ==================================================================== -->
+  <!-- Twitter Card -->
+  <!-- ==================================================================== -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{% block twitter_title %}NORTE Studio // Ropa Streetwear Chile{% endblock %}">
+  <meta name="twitter:description" content="{% block twitter_description %}Hoodies 450 GSM, poleras boxy fit y pantalones baggy. Envío a todo Chile.{% endblock %}">
+
+  <!-- ==================================================================== -->
+  <!-- Favicon e Iconos -->
+  <!-- ==================================================================== -->
+  <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+
+  <!-- ==================================================================== -->
+  <!-- Tipografía Google Fonts: Space Grotesk & Inter con font-display: swap -->
+  <!-- ==================================================================== -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- ==================================================================== -->
+  <!-- Hoja de Estilos Tailwind CSS Compilada -->
+  <!-- ==================================================================== -->
+  <link rel="stylesheet" href="{% static 'css/output.css' %}">
+
+  <!-- ==================================================================== -->
+  <!-- Datos Estructurados JSON-LD (Schema.org para Google Search) -->
+  <!-- ==================================================================== -->
+  {% block schema_jsonld %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization",
+        "name": "{{ STORE_BRAND_NAME }}",
+        "url": "{{ request.scheme }}://{{ request.get_host }}/",
+        "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'img/logo.svg' %}",
+        "email": "{{ STORE_CONTACT_EMAIL }}",
+        "telephone": "{{ STORE_CONTACT_PHONE }}",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Santiago",
+          "addressRegion": "Región Metropolitana",
+          "addressCountry": "CL"
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "{{ request.scheme }}://{{ request.get_host }}/#website",
+        "url": "{{ request.scheme }}://{{ request.get_host }}/",
+        "name": "{{ STORE_BRAND_NAME }}",
+        "publisher": {
+          "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization"
+        },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "{{ request.scheme }}://{{ request.get_host }}/catalogo/buscar/?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    ]
+  }
+  </script>
+  {% endblock schema_jsonld %}
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="min-h-full flex flex-col bg-bone text-dark selection:bg-dark selection:text-bone">
+
+  <!-- Preloader de Bienvenida con Isotipo -->
+  <div id="site-preloader" class="fixed inset-0 z-50 bg-bone flex flex-col items-center justify-center transition-opacity duration-500 ease-editorial select-none" aria-hidden="true">
+    <div class="w-16 h-16 text-dark animate-pulse">
+      {% include "partials/favicon_icon_svg.html" %}
+    </div>
+    <span class="mt-4 text-[10px] font-mono tracking-widest-caps uppercase text-dark-muted">
+      NORTE STUDIO // CHILE
+    </span>
+  </div>
+
+  <!-- Barra de Anuncios Rotativa -->
+  {% include "partials/announcement_bar.html" %}
+
+  <!-- Encabezado Principal -->
+  {% include "partials/header.html" %}
+
+  <!-- Notificaciones y Mensajes Flash del Framework de Django -->
+  {% if messages %}
+    <aside aria-label="Notificaciones del sistema" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-4">
+      {% for message in messages %}
+        <div class="p-3 text-xs font-semibold uppercase tracking-wider-label flex items-center justify-between border {% if message.tags == 'error' %}bg-accent-light text-accent border-accent{% elif message.tags == 'success' %}bg-dark text-bone border-dark{% else %}bg-bone-light text-dark border-bone-dark{% endif %}">
+          <span>{{ message }}</span>
+          <button type="button" onclick="this.parentElement.remove()" class="p-1 hover:opacity-75" aria-label="Cerrar mensaje">
+            &times;
+          </button>
+        </div>
+      {% endfor %}
+    </aside>
+  {% endif %}
+
+  <!-- Contenedor de Contenido Principal Dinámico -->
+  <main class="flex-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Pie de Página -->
+  {% include "partials/footer.html" %}
+
+  <!-- Modales y Paneles Deslizantes Accesibles -->
+  {% include "partials/mobile_menu.html" %}
+  {% include "partials/cart_drawer.html" %}
+  {% include "partials/search_overlay.html" %}
+
+  <!-- Módulos JavaScript Vanilla (ES Modules) -->
+  <script type="module" src="{% static 'js/main.js' %}"></script>
+
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

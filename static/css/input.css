@@ -1,0 +1,178 @@
+/**
+ * ==============================================================================
+ * Hoja de Estilos Principal de demo-sw (NORTE Studio Streetwear)
+ * ==============================================================================
+ * Combina las capas directivas de Tailwind CSS (@tailwind base, components, utilities)
+ * con componentes reutilizables (@apply) y keyframes personalizados para animaciones
+ * continuas como el marquee de marcas y efectos de shimmer.
+ * ==============================================================================
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------------------
+ * Capa Base: Tipografía y Suavizado
+ * ------------------------------------------------------------------------------ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    background-color: #F6F5F2; /* Tono hueso base de NORTE Studio */
+    color: #111111;            /* Negro profundo para alto contraste AA */
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  /* Selección de texto sobria estilo lookbook */
+  ::selection {
+    background-color: #111111;
+    color: #F6F5F2;
+  }
+}
+
+/* ------------------------------------------------------------------------------
+ * Capa de Componentes: Patrones de Interfaz Reutilizables
+ * ------------------------------------------------------------------------------ */
+@layer components {
+  /* Botón Principal: Fondo negro, texto hueso, sin radio exagerado */
+  .btn-primary {
+    @apply inline-flex items-center justify-center bg-dark text-bone px-6 py-3.5 text-xs font-semibold tracking-wider-label uppercase transition-all duration-300 ease-editorial hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dark disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px];
+  }
+
+  /* Botón Secundario / Outline: Línea sutil minimalista */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center bg-transparent text-dark border border-dark px-6 py-3.5 text-xs font-semibold tracking-wider-label uppercase transition-all duration-300 ease-editorial hover:bg-dark hover:text-bone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dark min-h-[44px];
+  }
+
+  /* Botón Fantasma / Enlace de Texto Editorial con subrayado animado */
+  .btn-link {
+    @apply relative inline-flex items-center text-xs font-bold tracking-wider-label uppercase text-dark transition-colors duration-200;
+  }
+  .btn-link::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-[1.5px] bg-dark transition-all duration-300 ease-editorial;
+  }
+  .btn-link:hover::after {
+    @apply w-full;
+  }
+
+  /* Chip de Selección de Talla (XS, S, M, L, XL, XXL) */
+  .size-chip {
+    @apply inline-flex items-center justify-center min-w-[44px] h-[44px] px-3 border border-bone-subtle bg-bone-light text-xs font-medium text-dark uppercase transition-all duration-200 cursor-pointer hover:border-dark select-none;
+  }
+  .size-chip.active {
+    @apply bg-dark text-bone border-dark font-semibold;
+  }
+  .size-chip.disabled {
+    @apply opacity-30 cursor-not-allowed border-dashed line-through pointer-events-none;
+  }
+
+  /* Selector de Color (Dot circular con borde exterior activo) */
+  .color-dot {
+    @apply relative w-6 h-6 rounded-full border border-bone-subtle cursor-pointer transition-transform duration-200 hover:scale-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-dark;
+  }
+  .color-dot.active {
+    @apply ring-2 ring-dark ring-offset-2 ring-offset-bone scale-110;
+  }
+
+  /* Contenedor de Prenda / Imagen con relación 4:5 */
+  .garment-frame {
+    @apply relative w-full aspect-lookbook overflow-hidden bg-bone-dark/40 flex items-center justify-center transition-colors duration-300;
+  }
+
+  /* Input de formulario con borde inferior o caja sutil */
+  .input-editorial {
+    @apply w-full bg-bone-light border border-bone-dark px-4 py-3 text-sm text-dark placeholder-dark-muted/60 focus:border-dark focus:ring-0 focus:outline-none transition-colors rounded-none min-h-[44px];
+  }
+}
+
+/* ------------------------------------------------------------------------------
+ * Capa de Utilidades y Keyframes Personalizados
+ * ------------------------------------------------------------------------------ */
+@layer utilities {
+  /* Marquee continuo para categorías y lemas */
+  .animate-marquee {
+    display: flex;
+    width: max-content;
+    animation: marqueeScroll 25s linear infinite;
+  }
+  .animate-marquee:hover {
+    animation-play-state: paused;
+  }
+
+  /* Efecto Shimmer de Carga (Skeleton Loader) */
+  .shimmer-mask {
+    position: relative;
+    overflow: hidden;
+  }
+  .shimmer-mask::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0,
+      rgba(255, 255, 255, 0.4) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    animation: shimmer 1.8s infinite;
+  }
+
+  /* Microanimación de rebote para el contador del carrito */
+  .badge-bounce {
+    animation: badgeBounce 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+}
+
+/* Keyframes de animación */
+@keyframes marqueeScroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes badgeBounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.4);
+  }
+}
+
+/* ------------------------------------------------------------------------------
+ * Accesibilidad: Desactivación con prefers-reduced-motion
+ * ------------------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-marquee {
+    animation: none !important;
+  }
+}

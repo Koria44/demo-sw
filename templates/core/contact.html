@@ -1,0 +1,77 @@
+{# templates/core/contact.html #}
+{# Propósito: Página de contacto y ubicación del showroom en Santiago de Chile #}
+
+{% extends "base.html" %}
+
+{% block meta_title %}Contacto & Taller Showroom // NORTE Studio Santiago{% endblock %}
+{% block meta_description %}Visita nuestro showroom en Santiago de Chile o contáctanos por WhatsApp y correo electrónico para asesoría de tallas y pedidos especiales.{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 select-none">
+
+  <header class="mb-12 pb-6 border-b border-bone-dark">
+    <span class="text-[10px] font-mono tracking-widest-caps uppercase text-dark-muted block">Atención Personalizada</span>
+    <h1 class="text-3xl sm:text-4xl font-bold uppercase tracking-widest-caps text-dark mt-1">
+      Contacto & Taller
+    </h1>
+    <p class="text-xs sm:text-sm text-dark-muted mt-2">
+      ¿Tienes dudas sobre el gramaje de una prenda, tu talla o el estado de tu despacho en Chile? Escríbenos directamente.
+    </p>
+  </header>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+
+    <!-- Formulario de Mensaje -->
+    <div class="bg-bone-light border border-bone-dark p-6 sm:p-8 space-y-4">
+      <h2 class="text-xs font-bold uppercase tracking-wider-label text-dark border-b border-bone-dark pb-2">
+        Envíanos un Mensaje
+      </h2>
+      <form onsubmit="event.preventDefault(); alert('Mensaje recibido. Te responderemos en menos de 24 horas hábiles.'); this.reset();" class="space-y-4 text-xs">
+        <div>
+          <label class="block text-[11px] font-mono uppercase text-dark-muted mb-1">Nombre Completo *</label>
+          <input type="text" required class="input-editorial" placeholder="Tu nombre">
+        </div>
+        <div>
+          <label class="block text-[11px] font-mono uppercase text-dark-muted mb-1">Correo Electrónico *</label>
+          <input type="email" required class="input-editorial" placeholder="correo@ejemplo.cl">
+        </div>
+        <div>
+          <label class="block text-[11px] font-mono uppercase text-dark-muted mb-1">Asunto *</label>
+          <input type="text" required class="input-editorial" placeholder="Consulta sobre tallas / Despacho">
+        </div>
+        <div>
+          <label class="block text-[11px] font-mono uppercase text-dark-muted mb-1">Mensaje *</label>
+          <textarea rows="4" required class="input-editorial resize-none" placeholder="Escribe tu consulta aquí..."></textarea>
+        </div>
+        <button type="submit" class="btn-primary w-full">
+          Enviar Mensaje
+        </button>
+      </form>
+    </div>
+
+    <!-- Información de Showroom y Canales Directos -->
+    <div class="space-y-8 text-xs text-dark-muted">
+      <!-- Canales Rápidos -->
+      <div class="space-y-3 bg-bone-light border border-bone-dark p-6">
+        <h3 class="text-xs font-bold uppercase tracking-wider-label text-dark">Canales Directos</h3>
+        <p><strong>Correo Oficial:</strong> <a href="mailto:{{ STORE_CONTACT_EMAIL }}" class="text-dark underline font-mono">{{ STORE_CONTACT_EMAIL }}</a></p>
+        <p><strong>WhatsApp Atención:</strong> <span class="font-mono text-dark font-bold">{{ STORE_CONTACT_PHONE }}</span></p>
+        <p><strong>Horario de Soporte:</strong> Lunes a Viernes de 09:30 a 18:30 hrs (Hora de Santiago de Chile).</p>
+      </div>
+
+      <!-- Showroom -->
+      <div class="space-y-3 bg-bone-light border border-bone-dark p-6">
+        <h3 class="text-xs font-bold uppercase tracking-wider-label text-dark">Showroom & Taller</h3>
+        <p class="text-dark font-medium">Barrio Italia / Providencia</p>
+        <p>Av. Italia 1439, Depto 204</p>
+        <p>Santiago, Región Metropolitana, Chile</p>
+        <p class="text-[11px] font-mono pt-2 text-dark-muted">
+          * Para visitas presenciales al showroom y pruebas de calce, por favor coordina previamente vía correo o WhatsApp.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

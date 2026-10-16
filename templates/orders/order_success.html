@@ -1,0 +1,115 @@
+{# templates/orders/order_success.html #}
+{# Propósito: Pantalla de confirmación y éxito de compra con número de pedido legible #}
+{# Espera: order #}
+
+{% extends "base.html" %}
+
+{% block meta_title %}Pedido {{ order.order_number }} Confirmado // NORTE Studio{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 select-none">
+
+  <!-- Mensaje de Éxito y Número de Pedido -->
+  <div class="bg-bone-light border border-bone-dark p-8 sm:p-12 text-center space-y-6">
+    <!-- Icono de Checkmark -->
+    <div class="w-16 h-16 mx-auto bg-dark text-bone flex items-center justify-center rounded-full">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+      </svg>
+    </div>
+
+    <div>
+      <span class="text-[10px] font-mono tracking-widest-caps uppercase text-dark-muted block">
+        Compra Realizada con Éxito
+      </span>
+      <h1 class="text-2xl sm:text-3xl font-bold uppercase tracking-widest-caps text-dark mt-1">
+        ¡Gracias por tu pedido, {{ order.first_name }}!
+      </h1>
+      <p class="text-xs text-dark-muted mt-2">
+        Hemos registrado tu orden en nuestro sistema. Te enviaremos el comprobante y el número de seguimiento a <strong class="text-dark">{{ order.email }}</strong>.
+      </p>
+    </div>
+
+    <!-- Código de Pedido Destacado -->
+    <div class="inline-block p-4 bg-bone border border-bone-dark text-center">
+      <span class="text-[10px] font-mono uppercase tracking-wider text-dark-muted block">Número de Seguimiento</span>
+      <span class="text-xl sm:text-2xl font-mono font-bold tracking-widest text-dark block mt-1">
+        {{ order.order_number }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Detalles de Despacho y Desglose de Prendas -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
+
+    <!-- Datos de Entrega en Chile -->
+    <div class="bg-bone-light border border-bone-dark p-6 space-y-4">
+      <h2 class="text-xs font-bold uppercase tracking-wider-label text-dark border-b border-bone-dark pb-2">
+        Datos de Envío
+      </h2>
+      <div class="space-y-1.5 text-xs text-dark-muted">
+        <p><strong>Destinatario:</strong> {{ order.full_name }}</p>
+        <p><strong>RUT:</strong> {{ order.rut }}</p>
+        <p><strong>Teléfono:</strong> {{ order.phone }}</p>
+        <p><strong>Dirección:</strong> {{ order.address_line }}{% if order.apartment_or_office %}, {{ order.apartment_or_office }}{% endif %}</p>
+        <p><strong>Comuna / Región:</strong> {{ order.comuna }}, {{ order.get_region_display }}</p>
+        {% if order.delivery_notes %}
+          <p class="pt-2 text-[11px] italic">"{{ order.delivery_notes }}"</p>
+        {% endif %}
+      </div>
+
+      <div class="pt-4 border-t border-bone-dark text-[11px] font-mono text-dark-muted space-y-1">
+        <p>📦 <strong>Plazo estimado:</strong> 24 a 48 hrs hábiles (RM) / 2 a 4 días (Regiones).</p>
+        <p>🚚 Courier asignado: Blue Express / Starken.</p>
+      </div>
+    </div>
+
+    <!-- Resumen de Totales y Productos -->
+    <div class="bg-bone-light border border-bone-dark p-6 space-y-4">
+      <h2 class="text-xs font-bold uppercase tracking-wider-label text-dark border-b border-bone-dark pb-2">
+        Prendas del Pedido
+      </h2>
+
+      <div class="divide-y divide-bone-dark max-h-56 overflow-y-auto">
+        {% for item in order.items.all %}
+          <div class="py-2.5 flex justify-between items-center text-xs">
+            <div>
+              <span class="font-semibold text-dark uppercase block">{{ item.product_name }}</span>
+              <span class="text-[10px] font-mono text-dark-muted">Talla {{ item.size }} • {{ item.color_name }} • {{ item.quantity }}x</span>
+            </div>
+            <span class="font-mono text-dark font-medium">{{ item.formatted_line_total }}</span>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="pt-3 border-t border-bone-dark space-y-1 text-xs">
+        <div class="flex justify-between text-dark-muted">
+          <span>Subtotal:</span>
+          <span class="font-mono text-dark">{{ order.formatted_subtotal }}</span>
+        </div>
+        <div class="flex justify-between text-dark-muted">
+          <span>Despacho:</span>
+          <span class="font-mono text-dark">{{ order.formatted_shipping }}</span>
+        </div>
+        <div class="flex justify-between text-sm font-bold text-dark pt-2 border-t border-bone-dark">
+          <span>Total Cancelado (CLP):</span>
+          <span class="font-mono">{{ order.formatted_total }}</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Botones de Acción -->
+  <div class="mt-12 text-center space-x-4">
+    <a href="{% url 'core:home' %}" class="btn-primary">
+      Volver al Inicio
+    </a>
+    <a href="{% url 'catalog:product_list' %}" class="btn-secondary">
+      Seguir Explorando el Catálogo
+    </a>
+  </div>
+
+</div>
+{% endblock %}

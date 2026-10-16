@@ -1,0 +1,381 @@
+{# templates/catalog/product_detail.html #}
+{# Propósito: Ficha técnica y detalle de prenda streetwear con selector dinámico de color en SVG, #}
+{# selector de tallas con validación obligatoria, acordeones técnicos y datos estructurados Schema.org #}
+{# Espera: product, related_products, reviews, default_color, has_reviews #}
+
+{% extends "base.html" %}
+
+{% block meta_title %}{{ product.name }} // NORTE Studio Chile{% endblock %}
+{% block meta_description %}{{ product.subtitle|default:product.description|truncatewords:25 }}{% endblock %}
+
+{% block schema_jsonld %}
+{{ block.super }}
+<!-- Datos Estructurados JSON-LD de Producto con Oferta en CLP y Calificación -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": "{{ product.name }}",
+  "description": "{{ product.description|escapejs }}",
+  "category": "{{ product.category.name }}",
+  "sku": "NSW-{{ product.id }}",
+  "brand": {
+    "@type": "Brand",
+    "name": "{{ STORE_BRAND_NAME }}"
+  },
+  "offers": {
+    "@type": "Offer",
+    "url": "{{ request.build_absolute_uri }}",
+    "priceCurrency": "CLP",
+    "price": "{{ product.price_clp }}",
+    "availability": "{% if product.is_in_stock %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+    "itemCondition": "https://schema.org/NewCondition"
+  }
+  {% if has_reviews %}
+  ,"aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "{{ product.average_rating }}",
+    "reviewCount": "{{ reviews.count }}"
+  }
+  {% endif %}
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 select-none" data-product-detail-container>
+
+  <!-- ======================================================================== -->
+  <!-- BREADCRUMBS -->
+  <!-- ======================================================================== -->
+  <nav aria-label="Migas de pan" class="mb-6">
+    <ol class="flex items-center space-x-2 text-[10px] font-mono tracking-wider uppercase text-dark-muted">
+      <li><a href="{% url 'core:home' %}" class="hover:text-dark">Inicio</a></li>
+      <li>/</li>
+      <li><a href="{% url 'catalog:product_list' %}" class="hover:text-dark">Catálogo</a></li>
+      <li>/</li>
+      <li><a href="{{ product.category.get_absolute_url }}" class="hover:text-dark">{{ product.category.name }}</a></li>
+      <li>/</li>
+      <li class="text-dark font-bold truncate max-w-[150px] sm:max-w-none" aria-current="page">{{ product.name }}</li>
+    </ol>
+  </nav>
+
+  <!-- ======================================================================== -->
+  <!-- DETALLE DEL PRODUCTO (GRID 2 COLUMNAS) -->
+  <!-- ======================================================================== -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
+
+    <!-- COLUMNA IZQUIERDA: VISUALIZADOR DE PRENDA INTERACTIVO (SVG / FOTO) -->
+    <div class="lg:col-span-7 space-y-4">
+      <!-- Marco Principal con Relación Lookbook 4:5 -->
+      <div class="relative w-full aspect-lookbook bg-bone-dark/40 border border-bone-dark flex items-center justify-center overflow-hidden">
+
+        <!-- Badges -->
+        <div class="absolute top-4 left-4 z-10 flex flex-col gap-2 pointer-events-none">
+          {% if product.is_new %}
+            <span class="px-2.5 py-1 bg-dark text-bone text-[9px] font-mono font-bold tracking-wider-label uppercase">
+              NUEVO DROPOUT
+            </span>
+          {% endif %}
+          {% if product.has_discount %}
+            <span class="px-2.5 py-1 bg-accent text-white text-[9px] font-mono font-bold tracking-wider-label uppercase">
+              OFERTA -{{ product.discount_percentage }}%
+            </span>
+          {% endif %}
+        </div>
+
+        {% if product.image %}
+          <!-- Foto real -->
+          <div data-view-front class="w-full h-full">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover">
+          </div>
+          {% if product.image_back %}
+            <div data-view-back class="w-full h-full hidden">
+              <img src="{{ product.image_back.url }}" alt="{{ product.name }} - Reverso" class="w-full h-full object-cover">
+            </div>
+          {% endif %}
+        {% else %}
+          <!-- Ilustración SVG Paramétrica Ghost Mannequin -->
+          <div class="w-4/5 h-4/5 flex items-center justify-center">
+            <!-- Vista Frontal -->
+            <div data-view-front class="w-full h-full flex items-center justify-center">
+              {% include "partials/garment_svg.html" with type=product.garment_type color=default_color.hex_code view='front' %}
+            </div>
+            <!-- Vista Trasera -->
+            <div data-view-back class="w-full h-full items-center justify-center hidden">
+              {% include "partials/garment_svg.html" with type=product.garment_type color=default_color.hex_code view='back' %}
+            </div>
+          </div>
+        {% endif %}
+
+        <!-- Marca de agua de confección -->
+        <div class="absolute bottom-4 left-4 font-mono text-[9px] uppercase tracking-wider text-dark-muted/60 pointer-events-none">
+          {{ product.fabric_details }}
+        </div>
+      </div>
+
+      <!-- Conmutador de Vistas: Frontal y Trasera -->
+      <div class="flex items-center justify-center space-x-3 pt-1">
+        <button
+          type="button"
+          data-view-switch="front"
+          class="border border-dark bg-dark text-bone px-4 py-2 text-[10px] font-mono uppercase tracking-wider transition-colors min-h-[44px]"
+        >
+          Vista Frontal
+        </button>
+        <button
+          type="button"
+          data-view-switch="back"
+          class="border border-bone-dark bg-bone text-dark px-4 py-2 text-[10px] font-mono uppercase tracking-wider hover:border-dark transition-colors min-h-[44px]"
+        >
+          Vista Trasera / Detalle
+        </button>
+      </div>
+    </div>
+
+    <!-- COLUMNA DERECHA: INFORMACIÓN TÉCNICA, SELECTORES Y COMPRA -->
+    <div class="lg:col-span-5 space-y-6">
+
+      <!-- Categoría y Colección -->
+      <div class="space-y-1">
+        <div class="flex items-center justify-between text-[11px] font-mono text-dark-muted uppercase">
+          <span>{{ product.category.name }}</span>
+          {% if product.collection %}
+            <span class="text-dark font-semibold">Drop: {{ product.collection.name }}</span>
+          {% endif %}
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-bold uppercase tracking-widest-caps text-dark leading-tight">
+          {{ product.name }}
+        </h1>
+        {% if product.subtitle %}
+          <p class="text-xs text-dark-muted font-medium pt-1">
+            {{ product.subtitle }}
+          </p>
+        {% endif %}
+      </div>
+
+      <!-- Precios en Pesos Chilenos (CLP) -->
+      <div class="p-4 bg-bone-light border border-bone-dark flex items-center justify-between">
+        <div>
+          <span class="text-xl sm:text-2xl font-mono font-bold text-dark block">
+            {{ product.formatted_price }}
+          </span>
+          {% if product.has_discount %}
+            <div class="flex items-center space-x-2 text-xs">
+              <span class="font-mono text-dark-muted line-through">{{ product.formatted_compare_price }}</span>
+              <span class="text-accent font-bold font-mono">Ahorras {{ product.discount_percentage }}%</span>
+            </div>
+          {% endif %}
+        </div>
+        <div class="text-right text-[10px] font-mono uppercase text-dark-muted">
+          <span>Precios en CLP</span>
+          <span class="block text-dark font-bold">IVA Incluido</span>
+        </div>
+      </div>
+
+      <!-- Promesa de Envío Gratis -->
+      <div class="flex items-center space-x-2 text-xs text-dark-muted border-l-2 border-dark pl-3 py-1">
+        <svg class="w-4 h-4 text-dark flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.25V3.75m0 3.75h-4.5m4.5 0v3.75m-9-3.75V3.75m0 3.75h4.5m-4.5 0v3.75"/>
+        </svg>
+        <span>Despacho <strong>GRATIS</strong> a todo Chile en compras sobre $70.000 CLP.</span>
+      </div>
+
+      <!-- FORMULARIO DE COMPRA -->
+      <form data-add-to-cart-form method="POST" class="space-y-6 pt-2">
+        {% csrf_token %}
+        <input type="hidden" name="product_id" value="{{ product.id }}">
+        <input type="hidden" name="color_id" data-color-input value="{{ default_color.id }}">
+        <input type="hidden" name="size" data-size-input value="">
+
+        <!-- 1. Selector de Color Interactivo -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold uppercase tracking-wider-label text-dark">
+              Color: <span data-selected-color-name class="font-normal text-dark-muted">{{ default_color.name }}</span>
+            </span>
+            <span class="text-[10px] font-mono text-dark-muted">Haz clic para cambiar tono</span>
+          </div>
+
+          <div class="flex items-center space-x-3">
+            {% for color in product.colors.all %}
+              <button
+                type="button"
+                data-color-dot
+                data-hex-code="{{ color.hex_code }}"
+                data-color-name="{{ color.name }}"
+                data-color-id="{{ color.id }}"
+                class="color-dot {% if forloop.first %}active{% endif %}"
+                style="background-color: {{ color.hex_code }}"
+                title="{{ color.name }}"
+                aria-label="Seleccionar color {{ color.name }}"
+              ></button>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- 2. Selector de Talla con Validación -->
+        <div class="space-y-2" data-size-selector-container>
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold uppercase tracking-wider-label text-dark">
+              Talla: <span data-selected-size-label class="font-normal text-dark-muted">Selecciona una talla</span>
+            </span>
+            <a href="{% url 'core:policies' %}#guia-tallas" class="text-[10px] font-mono underline hover:text-dark text-dark-muted">
+              Guía de Medidas (cm)
+            </a>
+          </div>
+
+          <div class="grid grid-cols-6 gap-2">
+            {% for size in product.sizes.all %}
+              <button
+                type="button"
+                data-size-chip
+                data-size-value="{{ size.size }}"
+                class="size-chip {% if size.stock <= 0 %}disabled{% endif %}"
+                title="{% if size.stock <= 0 %}Agotada{% else %}{{ size.stock }} disponibles{% endif %}"
+              >
+                {{ size.size }}
+              </button>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- 3. Selector de Cantidad y Botón de Compra -->
+        <div class="flex items-center space-x-4 pt-2">
+          <div class="inline-flex items-center border border-bone-dark bg-bone-light h-[52px]">
+            <button type="button" data-qty-dec class="w-10 h-full flex items-center justify-center text-sm font-mono text-dark hover:bg-bone-dark transition-colors" aria-label="Restar 1">-</button>
+            <input type="number" name="quantity" data-qty-input value="1" min="1" max="10" class="w-12 h-full text-center bg-transparent border-0 text-sm font-mono font-bold text-dark focus:ring-0 p-0">
+            <button type="button" data-qty-inc class="w-10 h-full flex items-center justify-center text-sm font-mono text-dark hover:bg-bone-dark transition-colors" aria-label="Sumar 1">+</button>
+          </div>
+
+          <button
+            type="submit"
+            class="btn-primary flex-1 h-[52px] text-xs font-bold tracking-widest-caps"
+          >
+            Agregar a la Bolsa
+          </button>
+        </div>
+      </form>
+
+      <!-- ACORDEONES TÉCNICOS DE CONFECCIÓN -->
+      <div class="border-t border-bone-dark divide-y divide-bone-dark pt-4">
+
+        <!-- Acordeón 1: Composición y Gramaje -->
+        <div class="py-3">
+          <button
+            type="button"
+            data-accordion-trigger
+            aria-expanded="false"
+            aria-controls="panel-fabric"
+            class="w-full flex items-center justify-between text-xs font-bold uppercase tracking-wider-label text-dark py-2 text-left"
+          >
+            <span>Ficha Técnica & Confección</span>
+            <svg data-accordion-icon class="w-4 h-4 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+          <div id="panel-fabric" class="hidden pt-2 pb-4 text-xs text-dark-muted space-y-2 leading-relaxed">
+            <p><strong>Composición:</strong> {{ product.fabric_details }}</p>
+            <p><strong>Silueta:</strong> {{ product.fit_details }}</p>
+            <p>{{ product.description }}</p>
+          </div>
+        </div>
+
+        <!-- Acordeón 2: Cuidados -->
+        <div class="py-3">
+          <button
+            type="button"
+            data-accordion-trigger
+            aria-expanded="false"
+            aria-controls="panel-care"
+            class="w-full flex items-center justify-between text-xs font-bold uppercase tracking-wider-label text-dark py-2 text-left"
+          >
+            <span>Instrucciones de Cuidado</span>
+            <svg data-accordion-icon class="w-4 h-4 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+          <div id="panel-care" class="hidden pt-2 pb-4 text-xs text-dark-muted space-y-2 leading-relaxed">
+            <p>{{ product.care_instructions }}</p>
+            <p>Recomendamos lavar con prendas de tonos similares y secar colgado a la sombra para preservar la densidad del hilado.</p>
+          </div>
+        </div>
+
+        <!-- Acordeón 3: Despacho a Regiones -->
+        <div class="py-3">
+          <button
+            type="button"
+            data-accordion-trigger
+            aria-expanded="false"
+            aria-controls="panel-shipping"
+            class="w-full flex items-center justify-between text-xs font-bold uppercase tracking-wider-label text-dark py-2 text-left"
+          >
+            <span>Despachos y Garantía en Chile</span>
+            <svg data-accordion-icon class="w-4 h-4 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+          <div id="panel-shipping" class="hidden pt-2 pb-4 text-xs text-dark-muted space-y-2 leading-relaxed">
+            <p><strong>Santiago:</strong> Entregas en 24 a 48 horas hábiles.</p>
+            <p><strong>Regiones:</strong> 2 a 4 días hábiles mediante Starken, Blue Express o Chilexpress.</p>
+            <p><strong>Cambios:</strong> 30 días corridos para cambio de talla sin costo adicional.</p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================================================================== -->
+  <!-- SECCIÓN DE RESEÑAS DE LA PRENDA -->
+  <!-- ======================================================================== -->
+  <section class="mt-20 pt-16 border-t border-bone-dark" aria-label="Opiniones de clientes">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-4 border-b border-bone-dark">
+      <div>
+        <span class="text-[10px] font-mono tracking-widest-caps uppercase text-dark-muted block">Feedback Comunitario</span>
+        <h2 class="text-xl sm:text-2xl font-bold uppercase tracking-widest-caps text-dark">
+          Reseñas de Esta Prenda ({{ reviews.count }})
+        </h2>
+      </div>
+      <div class="flex items-center space-x-2 text-xs font-mono mt-2 sm:mt-0">
+        <span class="font-bold text-dark text-base">{{ product.average_rating }} / 5.0</span>
+        <div class="flex text-dark">
+          {% for i in "12345"|make_list %}★{% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for review in reviews %}
+        {% include "partials/review_card.html" with review=review %}
+      {% empty %}
+        <p class="col-span-full py-8 text-center text-xs text-dark-muted">
+          Aún no hay reseñas para esta prenda. ¡Sé el primero en probar este gramaje!
+        </p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- ======================================================================== -->
+  <!-- PRODUCTOS RELACIONADOS -->
+  <!-- ======================================================================== -->
+  {% if related_products %}
+  <section class="mt-20 pt-16 border-t border-bone-dark" aria-label="Prendas complementarias">
+    <div class="mb-8 pb-4 border-b border-bone-dark">
+      <span class="text-[10px] font-mono tracking-widest-caps uppercase text-dark-muted block">Completa tu Conjunto</span>
+      <h2 class="text-xl sm:text-2xl font-bold uppercase tracking-widest-caps text-dark">
+        Prendas Relacionadas
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      {% for rel in related_products %}
+        {% include "partials/product_card.html" with product=rel %}
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+</div>
+{% endblock %}

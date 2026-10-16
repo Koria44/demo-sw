@@ -1,0 +1,99 @@
+{# templates/partials/header.html #}
+{# Propósito: Encabezado principal del sitio con navegación editorial, logotipo y accesos rápidos #}
+{# Espera: nav_categories, nav_collections, cart #}
+
+<header id="site-header" class="sticky top-0 z-30 bg-bone transition-transform duration-300 ease-editorial">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16 sm:h-20 border-b border-bone-dark">
+
+      <!-- 1. Menú Móvil (Botón Hamburguesa) & Enlaces Desktop -->
+      <div class="flex items-center space-x-6">
+        <!-- Disparador móvil -->
+        <button
+          type="button"
+          data-menu-trigger
+          class="lg:hidden p-2 -ml-2 text-dark hover:text-dark-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-dark min-w-[44px] min-h-[44px] flex items-center justify-center"
+          aria-label="Abrir menú de navegación"
+          aria-expanded="false"
+          aria-controls="mobile-menu-drawer"
+        >
+          <svg class="w-6 h-6 stroke-current" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+          </svg>
+        </button>
+
+        <!-- Navegación Primaria Desktop -->
+        <nav class="hidden lg:flex items-center space-x-8 text-xs font-semibold tracking-wider-label uppercase text-dark">
+          <a href="{% url 'catalog:product_list' %}" class="btn-link">Catálogo</a>
+          <a href="{% url 'catalog:category_detail' category_slug='hoodies' %}" class="btn-link">Hoodies</a>
+          <a href="{% url 'catalog:category_detail' category_slug='poleras' %}" class="btn-link">Poleras</a>
+          <a href="{% url 'catalog:category_detail' category_slug='pantalones' %}" class="btn-link">Pantalones</a>
+          <a href="{% url 'core:about' %}" class="btn-link text-dark-muted hover:text-dark">Conócenos</a>
+        </nav>
+      </div>
+
+      <!-- 2. Logotipo Central (NORTE Studio) -->
+      <div class="flex-shrink-0 flex items-center justify-center">
+        <a href="{% url 'core:home' %}" class="inline-block focus-visible:outline focus-visible:outline-2 focus-visible:outline-dark p-1" aria-label="Ir a la portada de NORTE Studio">
+          <div class="w-36 sm:w-44 text-dark">
+            {% include "partials/logo_svg.html" %}
+          </div>
+        </a>
+      </div>
+
+      <!-- 3. Acciones Secundarias (Buscar, Reseñas, Carrito) -->
+      <div class="flex items-center space-x-2 sm:space-x-4">
+        <!-- Botón de Búsqueda -->
+        <button
+          type="button"
+          data-search-trigger
+          class="p-2 text-dark hover:text-dark-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-dark min-w-[44px] min-h-[44px] flex items-center justify-center"
+          aria-label="Buscar prendas"
+          aria-expanded="false"
+          aria-controls="search-modal"
+        >
+          <svg class="w-5 h-5 stroke-current" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+          </svg>
+        </button>
+
+        <!-- Enlace a Reseñas de Clientes (Desktop) -->
+        <a
+          href="{% url 'catalog:reviews_list' %}"
+          class="hidden md:flex items-center text-xs font-semibold tracking-wider-label uppercase text-dark-muted hover:text-dark p-2 min-h-[44px]"
+          title="Ver opiniones de la comunidad"
+        >
+          Reseñas
+        </a>
+
+        <!-- Botón del Carrito con Contador Dinámico -->
+        <button
+          type="button"
+          data-cart-trigger
+          class="relative p-2 text-dark hover:text-dark-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-dark min-w-[44px] min-h-[44px] flex items-center justify-center"
+          aria-label="Abrir carrito de compras"
+          aria-expanded="false"
+          aria-controls="cart-drawer"
+        >
+          <svg class="w-5 h-5 stroke-current" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/>
+          </svg>
+
+          <!-- Contador numérico animado -->
+          <span
+            data-cart-counter
+            class="{% if cart.total_items == 0 %}hidden{% endif %} absolute top-1.5 right-1 w-4 h-4 bg-dark text-bone text-[9px] font-mono font-bold rounded-full flex items-center justify-center pointer-events-none"
+          >
+            {{ cart.total_items }}
+          </span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Barra fina de progreso de scroll -->
+  <div class="w-full bg-bone-dark/40 h-[2px]">
+    <div id="scroll-progress-indicator" class="h-full bg-dark w-0 transition-all duration-75"></div>
+  </div>
+</header>

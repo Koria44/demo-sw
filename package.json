@@ -1,0 +1,23 @@
+{
+  "name": "demo-sw",
+  "version": "1.0.0",
+  "description": "Tienda e-commerce de ropa streetwear NORTE Studio desarrollada en Django con Tailwind CSS",
+  "main": "manage.py",
+  "scripts": {
+    "dev": "tailwindcss -i ./static/css/input.css -o ./static/css/output.css --watch",
+    "build": "tailwindcss -i ./static/css/input.css -o ./static/css/output.css --minify"
+  },
+  "keywords": [
+    "django",
+    "streetwear",
+    "ecommerce",
+    "tailwind",
+    "chile"
+  ],
+  "author": "NORTE Studio",
+  "license": "MIT",
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.10",
+    "tailwindcss": "^3.4.17"
+  }
+}

@@ -1,0 +1,119 @@
+{# templates/partials/footer.html #}
+{# Propósito: Pie de página editorial con newsletter, enlaces corporativos y sellos de logística en Chile #}
+
+<footer class="bg-dark text-bone-dark pt-16 pb-12 border-t border-dark-surface select-none">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- Fila Superior: Newsletter y Manifiesto de Marca -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 pb-16 border-b border-bone-dark/15">
+      <!-- Manifiesto -->
+      <div class="lg:col-span-5 space-y-4">
+        <div class="w-40 text-bone">
+          {% include "partials/logo_svg.html" %}
+        </div>
+        <p class="text-xs text-bone-dark/70 leading-relaxed max-w-sm">
+          Streetwear chileno contemporáneo. Confeccionamos piezas de alto gramaje con calces limpios y siluetas atemporales. Diseñado y ensamblado en Santiago de Chile.
+        </p>
+        <div class="pt-2 text-[11px] font-mono tracking-wider-label uppercase text-bone-dark/50">
+          Santiago // Valparaíso // Concepción // Antofagasta
+        </div>
+      </div>
+
+      <!-- Formulario de Suscripción al Boletín -->
+      <div class="lg:col-span-7 space-y-4">
+        <div>
+          <span class="text-[10px] font-mono tracking-wider-label uppercase text-bone/60 block mb-1">Únete a la Comunidad</span>
+          <h3 class="text-base sm:text-lg font-bold text-bone uppercase tracking-wider-label">
+            Recibe 10% OFF en tu primer pedido
+          </h3>
+          <p class="text-xs text-bone-dark/70 mt-1">
+            Sé el primero en acceder a nuevos drops, reabastecimientos exclusivos y piezas limitadas.
+          </p>
+        </div>
+
+        <form action="{% url 'newsletter:subscribe' %}" method="POST" class="flex flex-col sm:flex-row gap-2 max-w-md">
+          {% csrf_token %}
+          <input
+            type="email"
+            name="email"
+            placeholder="tu-correo@ejemplo.cl"
+            required
+            class="flex-1 bg-dark-surface border border-bone-dark/30 px-4 py-3 text-xs text-bone placeholder-bone-dark/40 focus:border-bone focus:outline-none rounded-none min-h-[44px]"
+          >
+          <button
+            type="submit"
+            class="bg-bone text-dark px-6 py-3 text-xs font-semibold uppercase tracking-wider-label hover:bg-white transition-colors duration-200 min-h-[44px]"
+          >
+            Suscribirme
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Fila Central: Enlaces de Navegación -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 py-12 border-b border-bone-dark/15 text-xs">
+      <!-- Columna 1: Colección -->
+      <div class="space-y-3">
+        <h4 class="font-bold text-bone uppercase tracking-wider-label text-[11px]">Colecciones</h4>
+        <ul class="space-y-2 text-bone-dark/70">
+          <li><a href="{% url 'catalog:product_list' %}" class="hover:text-bone transition-colors">Todo el Catálogo</a></li>
+          <li><a href="{% url 'catalog:category_detail' category_slug='hoodies' %}" class="hover:text-bone transition-colors">Hoodies Heavyweight</a></li>
+          <li><a href="{% url 'catalog:category_detail' category_slug='poleras' %}" class="hover:text-bone transition-colors">Poleras Boxy Fit</a></li>
+          <li><a href="{% url 'catalog:category_detail' category_slug='pantalones' %}" class="hover:text-bone transition-colors">Pantalones Baggy</a></li>
+          <li><a href="{% url 'catalog:category_detail' category_slug='knits' %}" class="hover:text-bone transition-colors">Knits & Tejidos</a></li>
+        </ul>
+      </div>
+
+      <!-- Columna 2: Ayuda & Logística -->
+      <div class="space-y-3">
+        <h4 class="font-bold text-bone uppercase tracking-wider-label text-[11px]">Despachos & Guía</h4>
+        <ul class="space-y-2 text-bone-dark/70">
+          <li><a href="{% url 'core:policies' %}" class="hover:text-bone transition-colors">Envíos a todo Chile</a></li>
+          <li><a href="{% url 'core:policies' %}" class="hover:text-bone transition-colors">Cambios y Devoluciones</a></li>
+          <li><a href="{% url 'core:policies' %}#guia-tallas" class="hover:text-bone transition-colors">Guía de Tallas & Fit</a></li>
+          <li><a href="{% url 'catalog:reviews_list' %}" class="hover:text-bone transition-colors">Opiniones Verificadas</a></li>
+        </ul>
+      </div>
+
+      <!-- Columna 3: NORTE Studio -->
+      <div class="space-y-3">
+        <h4 class="font-bold text-bone uppercase tracking-wider-label text-[11px]">Estudio</h4>
+        <ul class="space-y-2 text-bone-dark/70">
+          <li><a href="{% url 'core:about' %}" class="hover:text-bone transition-colors">Conócenos / Manifiesto</a></li>
+          <li><a href="{% url 'core:contact' %}" class="hover:text-bone transition-colors">Taller & Showroom</a></li>
+          <li><a href="mailto:{{ STORE_CONTACT_EMAIL }}" class="hover:text-bone transition-colors">{{ STORE_CONTACT_EMAIL }}</a></li>
+          <li><a href="tel:{{ STORE_CONTACT_PHONE }}" class="hover:text-bone transition-colors">{{ STORE_CONTACT_PHONE }}</a></li>
+        </ul>
+      </div>
+
+      <!-- Columna 4: Legal & Acceso -->
+      <div class="space-y-3">
+        <h4 class="font-bold text-bone uppercase tracking-wider-label text-[11px]">Cuenta & Demo</h4>
+        <ul class="space-y-2 text-bone-dark/70">
+          <li><a href="/admin/" class="hover:text-bone transition-colors">Panel Admin (Django)</a></li>
+          <li><a href="{% url 'cart:cart_detail' %}" class="hover:text-bone transition-colors">Bolsa de Compras</a></li>
+          <li><a href="{% url 'core:policies' %}" class="hover:text-bone transition-colors">Privacidad de Datos</a></li>
+          <li><a href="{% url 'core:policies' %}" class="hover:text-bone transition-colors">Términos del Servicio</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Fila Inferior: Métodos de Pago y Logística Chilena -->
+    <div class="pt-8 flex flex-col md:flex-row items-center justify-between text-[11px] text-bone-dark/50 space-y-4 md:space-y-0">
+      <div class="flex items-center space-x-6">
+        <span>© 2026 {{ STORE_BRAND_NAME }}. Todos los derechos reservados.</span>
+        <span>•</span>
+        <span>Hecho en Chile</span>
+      </div>
+
+      <!-- Medios de Pago & Couriers de Chile -->
+      <div class="flex flex-wrap items-center gap-3 font-mono text-[10px] tracking-wider uppercase">
+        <span class="px-2 py-1 bg-dark-surface border border-bone-dark/20 text-bone-dark/80">Webpay Plus</span>
+        <span class="px-2 py-1 bg-dark-surface border border-bone-dark/20 text-bone-dark/80">Mercado Pago</span>
+        <span class="px-2 py-1 bg-dark-surface border border-bone-dark/20 text-bone-dark/80">Blue Express</span>
+        <span class="px-2 py-1 bg-dark-surface border border-bone-dark/20 text-bone-dark/80">Starken</span>
+      </div>
+    </div>
+
+  </div>
+</footer>

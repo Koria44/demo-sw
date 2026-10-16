@@ -1,0 +1,249 @@
+{# templates/partials/garment_svg.html #}
+{# Propósito: Renderiza la ilustración vectorial SVG paramétrica de prendas en estilo Ghost Mannequin / Flat Lay #}
+{# Variables de contexto: #}
+{#   - type: tipo de prenda ('hoodie', 'tee', 'zip', 'knit', 'pants', 'jacket', 'beanie') #}
+{#   - color: código hexadecimal del color textil (ej: '#161616') #}
+{#   - view: 'front' (frontal) o 'back' (trasera/detalle) #}
+{#   - css_class: clases CSS adicionales para posicionamiento y tamaño #}
+
+<svg
+  viewBox="0 0 200 240"
+  class="w-full h-full object-contain pointer-events-none select-none {{ css_class|default:'' }}"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label="Ilustración textil de {{ type|default:'prenda' }} streetwear en tono {{ color|default:'#161616' }}"
+>
+  <defs>
+    <!-- Filtro SVG de textura táctil: simula el entramado sutil de algodón peinado de alto gramaje -->
+    <filter id="fabricNoise" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" result="noise" />
+      <feColorMatrix type="matrix" values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.04 0" />
+      <feComposite in2="SourceGraphic" in="glare" operator="atop" />
+    </filter>
+
+    <!-- Gradiente de sombra de caída / luz lateral suave de estudio fotográfico -->
+    <linearGradient id="studioLighting" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.18" />
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.25" />
+    </linearGradient>
+
+    <!-- Sombra lineal en costuras de mangas y bolsillo -->
+    <linearGradient id="seamShadow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.05" />
+    </linearGradient>
+  </defs>
+
+  <!-- 1. Sombra de contacto inferior sobre la superficie de estudio -->
+  <ellipse cx="100" cy="226" rx="64" ry="7" fill="#000000" opacity="0.18" filter="blur(3px)" />
+
+  <!-- ======================================================================== -->
+  <!-- PRENDA: HOODIE HEAVYWEIGHT 450 GSM -->
+  <!-- ======================================================================== -->
+  {% if type == 'hoodie' or not type %}
+    {% if view == 'back' %}
+      <!-- VISTA TRASERA: Espalda limpia, caída de hombros y reverso de capucha -->
+      <g id="hoodie-back">
+        <!-- Mangas traseras -->
+        <path data-garment-cloth d="M38 48 L10 110 L26 122 L52 74 Z" fill="{{ color|default:'#161616' }}" />
+        <path data-garment-cloth d="M162 48 L190 110 L174 122 L148 74 Z" fill="{{ color|default:'#161616' }}" />
+        <!-- Puños traseros -->
+        <path d="M10 110 L26 122 L22 130 L6 118 Z" fill="#000000" opacity="0.25" />
+        <path d="M190 110 L174 122 L178 130 L194 118 Z" fill="#000000" opacity="0.25" />
+        <!-- Cuerpo trasero principal -->
+        <path data-garment-cloth d="M48 52 L152 52 L148 196 L52 196 Z" fill="{{ color|default:'#161616' }}" />
+        <!-- Iluminación y textura -->
+        <path d="M48 52 L152 52 L148 196 L52 196 Z" fill="url(#studioLighting)" />
+        <!-- Pretina inferior trasera acanalada -->
+        <rect x="52" y="196" width="96" height="16" fill="#000000" opacity="0.22" />
+        <line x1="52" y1="196" x2="148" y2="196" stroke="#000000" stroke-width="1" stroke-opacity="0.4" />
+        <!-- Capucha trasera con volumen envolvente -->
+        <path data-garment-cloth d="M68 50 C68 18 132 18 132 50 C132 58 68 58 68 50 Z" fill="{{ color|default:'#161616' }}" />
+        <path d="M68 50 C68 18 132 18 132 50 C132 58 68 58 68 50 Z" fill="url(#studioLighting)" />
+        <!-- Costura central de la capucha -->
+        <line x1="100" y1="20" x2="100" y2="52" stroke="#000000" stroke-width="1.2" stroke-opacity="0.4" stroke-dasharray="2,2" />
+        <!-- Isotipo tonal en el omóplato -->
+        <circle cx="100" cy="80" r="3" fill="#ffffff" opacity="0.15" />
+      </g>
+    {% else %}
+      <!-- VISTA FRONTAL: Capucha rígida, hombro caído, bolsillo canguro y puños -->
+      <g id="hoodie-front">
+        <!-- Mangas frontales -->
+        <path data-garment-cloth d="M38 48 L10 110 L26 122 L52 74 Z" fill="{{ color|default:'#161616' }}" />
+        <path data-garment-cloth d="M162 48 L190 110 L174 122 L148 74 Z" fill="{{ color|default:'#161616' }}" />
+        <!-- Sombra en unión de manga -->
+        <path d="M38 48 L52 74" stroke="#000000" stroke-width="1.8" stroke-opacity="0.3" />
+        <path d="M162 48 L148 74" stroke="#000000" stroke-width="1.8" stroke-opacity="0.3" />
+        <!-- Puños acanalados 2x2 -->
+        <path d="M10 110 L26 122 L22 130 L6 118 Z" fill="#000000" opacity="0.25" />
+        <path d="M190 110 L174 122 L178 130 L194 118 Z" fill="#000000" opacity="0.25" />
+        <!-- Cuerpo principal estructurado (corte boxy) -->
+        <path data-garment-cloth d="M48 52 L152 52 L148 196 L52 196 Z" fill="{{ color|default:'#161616' }}" />
+        <!-- Iluminación de estudio sobre el torso -->
+        <path d="M48 52 L152 52 L148 196 L52 196 Z" fill="url(#studioLighting)" />
+        <!-- Pretina inferior acanalada -->
+        <rect x="52" y="196" width="96" height="16" fill="#000000" opacity="0.22" />
+        <line x1="52" y1="196" x2="148" y2="196" stroke="#000000" stroke-width="1.5" stroke-opacity="0.4" />
+        <!-- Bolsillo canguro frontal con aberturas diagonales -->
+        <path data-garment-cloth d="M66 142 L134 142 L140 196 L60 196 Z" fill="{{ color|default:'#161616' }}" />
+        <path d="M66 142 L134 142 L140 196 L60 196 Z" fill="url(#studioLighting)" />
+        <!-- Costuras dobles del bolsillo canguro -->
+        <path d="M66 142 L60 196 M134 142 L140 196" stroke="#000000" stroke-width="1.5" stroke-opacity="0.4" />
+        <path d="M66 142 L134 142" stroke="#000000" stroke-width="1.2" stroke-opacity="0.3" stroke-dasharray="3,1" />
+        <!-- Capucha frontal doble tela con caída erguida sin cordones -->
+        <path data-garment-cloth d="M72 52 C65 24 95 18 100 18 C105 18 135 24 128 52 C120 62 80 62 72 52 Z" fill="{{ color|default:'#161616' }}" />
+        <path d="M72 52 C65 24 95 18 100 18 C105 18 135 24 128 52 C120 62 80 62 72 52 Z" fill="url(#studioLighting)" />
+        <!-- Abertura interior profunda de la capucha -->
+        <path d="M84 46 C84 32 116 32 116 46 C116 56 84 56 84 46 Z" fill="#000000" opacity="0.45" />
+      </g>
+    {% endif %}
+
+  <!-- ======================================================================== -->
+  <!-- PRENDA: POLERA BOXY FIT 260 GSM -->
+  <!-- ======================================================================== -->
+  {% elif type == 'tee' %}
+    <g id="tee-vector">
+      <!-- Mangas anchas hasta el pliegue del codo -->
+      <path data-garment-cloth d="M42 45 L8 88 L26 102 L54 68 Z" fill="{{ color|default:'#33261D' }}" />
+      <path data-garment-cloth d="M158 45 L192 88 L174 102 L146 68 Z" fill="{{ color|default:'#33261D' }}" />
+      <!-- Dobladillo de manga con doble costura -->
+      <line x1="8" y1="88" x2="26" y2="102" stroke="#000000" stroke-width="1.2" stroke-opacity="0.3" />
+      <line x1="192" y1="88" x2="174" y2="102" stroke="#000000" stroke-width="1.2" stroke-opacity="0.3" />
+      <!-- Torso cuadrado Boxy Fit -->
+      <path data-garment-cloth d="M48 48 L152 48 L150 200 L50 200 Z" fill="{{ color|default:'#33261D' }}" />
+      <path d="M48 48 L152 48 L150 200 L50 200 Z" fill="url(#studioLighting)" />
+      <!-- Basta inferior recta con pespunte doble -->
+      <line x1="50" y1="194" x2="150" y2="194" stroke="#000000" stroke-width="1" stroke-opacity="0.25" stroke-dasharray="3,1" />
+      <!-- Cuello alto acanalado de 3 cm -->
+      <path d="M80 44 C80 58 120 58 120 44 C120 38 80 38 80 44 Z" fill="#000000" opacity="0.28" />
+      <path d="M82 46 C82 54 118 54 118 46" stroke="#000000" stroke-width="1.8" stroke-opacity="0.35" fill="none" />
+      <!-- Pliegue sutil en el pecho que denota peso de la tela -->
+      <path d="M75 105 Q100 115 125 105" stroke="#000000" stroke-width="1.2" stroke-opacity="0.18" fill="none" />
+    </g>
+
+  <!-- ======================================================================== -->
+  <!-- PRENDA: POLERÓN ZIP UP CON CIERRE YKK -->
+  <!-- ======================================================================== -->
+  {% elif type == 'zip' %}
+    <g id="zip-vector">
+      <!-- Mangas -->
+      <path data-garment-cloth d="M38 48 L10 110 L26 122 L52 74 Z" fill="{{ color|default:'#1E2530' }}" />
+      <path data-garment-cloth d="M162 48 L190 110 L174 122 L148 74 Z" fill="{{ color|default:'#1E2530' }}" />
+      <!-- Cuerpo con dos mitades separadas por cremallera metálica -->
+      <path data-garment-cloth d="M48 52 L98 52 L98 196 L52 196 Z" fill="{{ color|default:'#1E2530' }}" />
+      <path data-garment-cloth d="M102 52 L152 52 L148 196 L102 196 Z" fill="{{ color|default:'#1E2530' }}" />
+      <!-- Luz lateral -->
+      <path d="M48 52 L152 52 L148 196 L52 196 Z" fill="url(#studioLighting)" />
+      <!-- Bolsillos laterales estilo ojal -->
+      <line x1="62" y1="150" x2="88" y2="185" stroke="#000000" stroke-width="2" stroke-opacity="0.35" />
+      <line x1="138" y1="150" x2="112" y2="185" stroke="#000000" stroke-width="2" stroke-opacity="0.35" />
+      <!-- Cremallera metálica central plateada -->
+      <rect x="98.5" y="44" width="3" height="154" fill="#C5C5C5" />
+      <line x1="100" y1="44" x2="100" y2="198" stroke="#111111" stroke-width="0.8" stroke-dasharray="2,1" />
+      <!-- Doble tirador de cierre YKK -->
+      <rect x="97" y="60" width="6" height="10" fill="#EAEAEA" stroke="#444444" stroke-width="0.8" rx="1" />
+      <rect x="97" y="178" width="6" height="10" fill="#EAEAEA" stroke="#444444" stroke-width="0.8" rx="1" />
+      <!-- Cuello alzado de franela -->
+      <path data-garment-cloth d="M76 44 L100 48 L124 44 L120 32 L80 32 Z" fill="{{ color|default:'#1E2530' }}" />
+    </g>
+
+  <!-- ======================================================================== -->
+  <!-- PRENDA: SWEATER KNIT TEXTURIZADO -->
+  <!-- ======================================================================== -->
+  {% elif type == 'knit' %}
+    <g id="knit-vector">
+      <!-- Mangas con caída raglan suave -->
+      <path data-garment-cloth d="M42 46 L12 112 L28 124 L56 70 Z" fill="{{ color|default:'#B6B5B0' }}" />
+      <path data-garment-cloth d="M158 46 L188 112 L172 124 L144 70 Z" fill="{{ color|default:'#B6B5B0' }}" />
+      <!-- Torso con textura acanalada de punto grueso -->
+      <path data-garment-cloth d="M48 48 L152 48 L148 198 L52 198 Z" fill="{{ color|default:'#B6B5B0' }}" />
+      <path d="M48 48 L152 48 L148 198 L52 198 Z" fill="url(#studioLighting)" />
+      <!-- Líneas de punto inglés vertical -->
+      {% for x in "60,70,80,90,100,110,120,130,140"|make_list %}
+        <!-- Líneas divisorias de hilado -->
+      {% endfor %}
+      <path d="M62 60 L62 190 M74 60 L74 190 M86 60 L86 190 M98 60 L98 190 M110 60 L110 190 M122 60 L122 190 M134 60 L134 190" stroke="#000000" stroke-width="1.2" stroke-opacity="0.14" stroke-dasharray="4,2" />
+      <!-- Cuello redondo grueso acanalado -->
+      <path d="M78 44 C78 56 122 56 122 44 C122 36 78 36 78 44 Z" fill="#000000" opacity="0.3" />
+      <path d="M80 44 C80 54 120 54 120 44" stroke="#000000" stroke-width="2.5" stroke-opacity="0.3" fill="none" />
+      <!-- Puños y basta acanalada de 8 cm -->
+      <rect x="52" y="196" width="96" height="14" fill="#000000" opacity="0.22" />
+    </g>
+
+  <!-- ======================================================================== -->
+  <!-- PRENDA: PANTALÓN BAGGY & CARGO -->
+  <!-- ======================================================================== -->
+  {% elif type == 'pants' %}
+    <g id="pants-vector">
+      <!-- Pretina con pasadores y botón -->
+      <rect data-garment-cloth x="56" y="24" width="88" height="18" fill="{{ color|default:'#383B2D' }}" />
+      <rect x="56" y="24" width="88" height="18" fill="url(#studioLighting)" />
+      <circle cx="100" cy="33" r="2.5" fill="#C5C5C5" stroke="#333333" stroke-width="0.8" />
+      <!-- Pasadores de cinturón -->
+      <rect x="66" y="24" width="3" height="18" fill="#000000" opacity="0.3" />
+      <rect x="90" y="24" width="3" height="18" fill="#000000" opacity="0.3" />
+      <rect x="110" y="24" width="3" height="18" fill="#000000" opacity="0.3" />
+      <rect x="131" y="24" width="3" height="18" fill="#000000" opacity="0.3" />
+      <!-- Piernas anchas baggy con tiro relajado -->
+      <path data-garment-cloth d="M56 42 L100 42 L96 90 L50 216 L24 216 L48 80 Z" fill="{{ color|default:'#383B2D' }}" />
+      <path data-garment-cloth d="M100 42 L144 42 L152 80 L176 216 L150 216 L104 90 Z" fill="{{ color|default:'#383B2D' }}" />
+      <!-- Sombra e iluminación -->
+      <path d="M50 42 L150 42 L176 216 L150 216 L100 90 L50 216 L24 216 Z" fill="url(#studioLighting)" />
+      <!-- Pinzas frontales verticales sastreadas -->
+      <line x1="72" y1="42" x2="68" y2="120" stroke="#000000" stroke-width="1.5" stroke-opacity="0.3" />
+      <line x1="128" y1="42" x2="132" y2="120" stroke="#000000" stroke-width="1.5" stroke-opacity="0.3" />
+      <!-- Bolsillos cargo laterales 3D -->
+      <rect x="36" y="110" width="18" height="30" fill="#000000" opacity="0.18" rx="1" />
+      <rect x="146" y="110" width="18" height="30" fill="#000000" opacity="0.18" rx="1" />
+      <line x1="36" y1="118" x2="54" y2="118" stroke="#000000" stroke-width="1.2" stroke-opacity="0.4" />
+      <line x1="146" y1="118" x2="164" y2="118" stroke="#000000" stroke-width="1.2" stroke-opacity="0.4" />
+      <!-- Bastas anchas rectas de 28 cm descansando sobre zapatilla -->
+      <line x1="24" y1="214" x2="50" y2="214" stroke="#000000" stroke-width="2" stroke-opacity="0.4" />
+      <line x1="150" y1="214" x2="176" y2="214" stroke="#000000" stroke-width="2" stroke-opacity="0.4" />
+    </g>
+
+  <!-- ======================================================================== -->
+  <!-- PRENDA: CHAQUETA BOMBER / OUTERWEAR -->
+  <!-- ======================================================================== -->
+  {% elif type == 'jacket' %}
+    <g id="jacket-vector">
+      <!-- Mangas acolchadas estructuradas -->
+      <path data-garment-cloth d="M40 44 L6 115 L24 126 L56 76 Z" fill="{{ color|default:'#161616' }}" />
+      <path data-garment-cloth d="M160 44 L194 115 L176 126 L144 76 Z" fill="{{ color|default:'#161616' }}" />
+      <!-- Cuerpo con cierre y solapa protectora -->
+      <path data-garment-cloth d="M48 48 L152 48 L146 188 L54 188 Z" fill="{{ color|default:'#161616' }}" />
+      <path d="M48 48 L152 48 L146 188 L54 188 Z" fill="url(#studioLighting)" />
+      <!-- Cuello camisero doblado clásico -->
+      <polygon points="76,46 100,56 68,64 74,46" fill="#000000" opacity="0.4" />
+      <polygon points="124,46 100,56 132,64 126,46" fill="#000000" opacity="0.4" />
+      <!-- Bolsillo ojal diagonal con broche -->
+      <line x1="60" y1="135" x2="84" y2="155" stroke="#000000" stroke-width="2.5" stroke-opacity="0.4" />
+      <line x1="140" y1="135" x2="116" y2="155" stroke="#000000" stroke-width="2.5" stroke-opacity="0.4" />
+      <!-- Pretina elástica fruncida inferior -->
+      <rect x="54" y="188" width="92" height="16" fill="#000000" opacity="0.3" />
+      <!-- Cierre metálico oculto con tapeta central -->
+      <line x1="100" y1="56" x2="100" y2="190" stroke="#000000" stroke-width="2.2" stroke-opacity="0.5" />
+    </g>
+
+  <!-- ======================================================================== -->
+  <!-- PRENDA: GORRO BEANIE / ACCESORIO -->
+  <!-- ======================================================================== -->
+  {% else %}
+    <g id="beanie-vector">
+      <!-- Cúpula de tejido de punto acanalado -->
+      <path data-garment-cloth d="M60 160 C60 65 140 65 140 160 Z" fill="{{ color|default:'#161616' }}" />
+      <path d="M60 160 C60 65 140 65 140 160 Z" fill="url(#studioLighting)" />
+      <!-- Líneas de disminución de la corona -->
+      <path d="M100 65 L100 130 M80 85 L85 130 M120 85 L115 130" stroke="#000000" stroke-width="1.2" stroke-opacity="0.25" />
+      <!-- Vuelta / Dobladillo doblado inferior ancho -->
+      <rect data-garment-cloth x="52" y="145" width="96" height="34" rx="2" fill="{{ color|default:'#161616' }}" />
+      <rect x="52" y="145" width="96" height="34" rx="2" fill="url(#studioLighting)" />
+      <!-- Etiqueta tejida rectangular en el dobladillo -->
+      <rect x="88" y="152" width="24" height="18" fill="#111111" stroke="#444444" stroke-width="0.8" />
+      <text x="100" y="164" font-family="'Space Grotesk', monospace" font-size="5" font-weight="700" fill="#F6F5F2" text-anchor="middle" letter-spacing="1">
+        NORTE
+      </text>
+    </g>
+  {% endif %}
+</svg>

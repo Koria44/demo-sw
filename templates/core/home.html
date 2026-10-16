@@ -1,0 +1,318 @@
+{# templates/core/home.html #}
+{# Propósito: Portada editorial de NORTE Studio con Hero escénico, marquee, tarjetas lookbook, #}
+{# destacados, manifiesto y testimonios verificados de clientes en Chile #}
+{# Espera: featured_products, new_arrivals, main_drop, highlight_reviews, nav_categories #}
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block meta_title %}NORTE Studio // Streetwear Chileno de Alto Gramaje (450 GSM){% endblock %}
+{% block meta_description %}Básicos pesados de moda urbana confeccionados en Chile. Hoodies de 450 GSM, poleras boxy fit y pantalones baggy. Despacho gratis sobre $70.000 CLP.{% endblock %}
+
+{% block content %}
+
+<!-- ======================================================================== -->
+<!-- SECCIÓN 1: HERO EDITORIAL A PANTALLA COMPLETA -->
+<!-- ======================================================================== -->
+<section class="relative min-h-[85vh] sm:min-h-[90vh] bg-bone-dark/50 border-b border-bone-dark overflow-hidden flex items-center select-none" aria-label="Portada de colección">
+  <!-- Fondo de estudio: Textura de hormigón sutil con luz lateral -->
+  <div class="absolute inset-0 pointer-events-none opacity-40">
+    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="studioSpotlight" cx="70%" cy="30%" r="70%">
+          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.8"/>
+          <stop offset="60%" stop-color="#F6F5F2" stop-opacity="0.1"/>
+          <stop offset="100%" stop-color="#111111" stop-opacity="0.15"/>
+        </radialGradient>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#studioSpotlight)" />
+    </svg>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-16 sm:py-24 relative z-10">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+
+      <!-- Columna Izquierda: Texto Editorial y Llamados a la Acción -->
+      <div class="lg:col-span-6 space-y-6">
+        <div data-hero-reveal class="opacity-0 translate-y-6 transition-all duration-700 ease-editorial">
+          <span class="inline-flex items-center space-x-2 text-[11px] font-mono tracking-widest-caps uppercase text-dark-muted pb-1">
+            <span class="w-2 h-2 rounded-full bg-dark"></span>
+            <span>Edición Austral // Temporada 2026</span>
+          </span>
+          <h1 class="text-3xl sm:text-5xl lg:text-6xl font-bold uppercase tracking-widest-caps text-dark leading-none pt-2">
+            Streetwear de Alto Gramaje
+          </h1>
+        </div>
+
+        <p data-hero-reveal class="opacity-0 translate-y-6 transition-all duration-700 delay-100 ease-editorial text-sm sm:text-base text-dark-muted leading-relaxed max-w-lg">
+          Prendas construidas con felpas peinadas de 450 y 500 GSM. Cortes sobrios, hombros caídos y una caída limpia diseñada para perdurar año tras año.
+        </p>
+
+        <div data-hero-reveal class="opacity-0 translate-y-6 transition-all duration-700 delay-200 ease-editorial flex flex-wrap gap-4 pt-4">
+          <a href="{% url 'catalog:product_list' %}" class="btn-primary">
+            Explorar Catálogo
+          </a>
+          {% if main_drop %}
+            <a href="{{ main_drop.get_absolute_url }}" class="btn-secondary">
+              Ver {{ main_drop.name }}
+            </a>
+          {% endif %}
+        </div>
+
+        <!-- Metadatos de confección -->
+        <div data-hero-reveal class="opacity-0 translate-y-6 transition-all duration-700 delay-300 ease-editorial pt-8 border-t border-bone-dark grid grid-cols-3 gap-4 text-left">
+          <div>
+            <span class="text-base sm:text-lg font-mono font-bold text-dark block">450 GSM</span>
+            <span class="text-[10px] uppercase font-mono text-dark-muted">Densidad Algodón</span>
+          </div>
+          <div>
+            <span class="text-base sm:text-lg font-mono font-bold text-dark block">Boxy Fit</span>
+            <span class="text-[10px] uppercase font-mono text-dark-muted">Silueta Cuadrada</span>
+          </div>
+          <div>
+            <span class="text-base sm:text-lg font-mono font-bold text-dark block">$70.000</span>
+            <span class="text-[10px] uppercase font-mono text-dark-muted">Envío Gratis Chile</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna Derecha: Escena de Estudio con Prendas SVG en Ghost Mannequin -->
+      <div class="lg:col-span-6 relative flex items-center justify-center">
+        <div class="relative w-full max-w-lg aspect-square flex items-center justify-center">
+          <!-- Fondo geométrico tipo lookbook -->
+          <div class="absolute inset-4 bg-bone-light border border-bone-dark shadow-sm"></div>
+
+          <!-- Prenda principal del Hero: Hoodie Heavyweight Negro -->
+          <div class="relative z-10 w-4/5 h-4/5 transform hover:scale-105 transition-transform duration-700 ease-editorial">
+            {% include "partials/garment_svg.html" with type="hoodie" color="#161616" view="front" %}
+          </div>
+
+          <!-- Etiqueta técnica superpuesta estilo pasarela -->
+          <div class="absolute bottom-8 right-8 z-20 bg-dark text-bone p-3 font-mono text-[10px] uppercase tracking-wider space-y-0.5 shadow-md">
+            <span class="block text-bone/60">Pieza Insignia:</span>
+            <span class="font-bold block">Hoodie Boxy 450 GSM</span>
+            <span class="text-bone/80 block">$54.990 CLP</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================== -->
+<!-- SECCIÓN 2: MARQUEE CONTINUO DE CATEGORÍAS Y LEMAS -->
+<!-- ======================================================================== -->
+<aside class="py-4 bg-dark text-bone border-b border-dark-surface overflow-hidden select-none" aria-label="Cualidades de marca">
+  <div class="animate-marquee flex items-center space-x-12 text-xs font-mono tracking-widest-caps uppercase">
+    <span>HOODIES 450 GSM</span>
+    <span>•</span>
+    <span>POLERAS BOXY FIT 260 GSM</span>
+    <span>•</span>
+    <span>PANTALONES BAGGY & CARGO</span>
+    <span>•</span>
+    <span>CONFECCIÓN NACIONAL EN SANTIAGO</span>
+    <span>•</span>
+    <span>DESPACHO GRATIS SOBRE $70.000 CLP</span>
+    <span>•</span>
+    <span>TINTURA EN PRENDA GARMENT DYED</span>
+    <span>•</span>
+    <span>KNITS & TEJIDOS BRUTALISTAS</span>
+    <span>•</span>
+    <span>CIERRES YKK BIDIRECCIONALES</span>
+    <span>•</span>
+    <!-- Duplicado idéntico para continuidad del bucle sin saltos -->
+    <span>HOODIES 450 GSM</span>
+    <span>•</span>
+    <span>POLERAS BOXY FIT 260 GSM</span>
+    <span>•</span>
+    <span>PANTALONES BAGGY & CARGO</span>
+    <span>•</span>
+    <span>CONFECCIÓN NACIONAL EN SANTIAGO</span>
+    <span>•</span>
+    <span>DESPACHO GRATIS SOBRE $70.000 CLP</span>
+    <span>•</span>
+    <span>TINTURA EN PRENDA GARMENT DYED</span>
+    <span>•</span>
+    <span>KNITS & TEJIDOS BRUTALISTAS</span>
+    <span>•</span>
+    <span>CIERRES YKK BIDIRECCIONALES</span>
+    <span>•</span>
+  </div>
+</aside>
+
+<!-- ======================================================================== -->
+<!-- SECCIÓN 3: TARJETAS DE CATEGORÍA ESTILO PÓSTER LOOKBOOK -->
+<!-- ======================================================================== -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20" aria-label="Categorías principales">
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 pb-4 border-b border-bone-dark">
+    <div>
+      <span class="text-[10px] font-mono tracking-widest-caps uppercase text-dark-muted block">Exploración Visual</span>
+      <h2 class="text-xl sm:text-2xl font-bold uppercase tracking-widest-caps text-dark">
+        Categorías de Confección
+      </h2>
+    </div>
+    <a href="{% url 'catalog:product_list' %}" class="btn-link mt-2 sm:mt-0">
+      Ver Catálogo Completo &rarr;
+    </a>
+  </div>
+
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+    {% for cat in nav_categories %}
+      <a href="{{ cat.get_absolute_url }}" class="group block relative bg-bone-light border border-bone-dark overflow-hidden hover:border-dark transition-colors duration-300">
+        <!-- Contenedor con prenda recortada a gran escala -->
+        <div class="w-full aspect-[3/4] p-4 flex items-center justify-center bg-bone-dark/30 group-hover:bg-bone-dark/50 transition-colors">
+          <div class="w-full h-full transform group-hover:scale-110 transition-transform duration-500 ease-editorial">
+            {% include "partials/garment_svg.html" with type=cat.garment_type color=cat.default_color_hex view="front" %}
+          </div>
+        </div>
+
+        <!-- Nombre de Categoría -->
+        <div class="p-3 bg-bone border-t border-bone-dark text-center">
+          <h3 class="text-xs font-bold uppercase tracking-wider-label text-dark group-hover:underline">
+            {{ cat.name }}
+          </h3>
+          <span class="text-[10px] font-mono text-dark-muted block mt-0.5">
+            {{ cat.products.count }} prendas
+          </span>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ======================================================================== -->
+<!-- SECCIÓN 4: PRENDAS DESTACADAS (HOVER CON CAMBIO DE VISTA) -->
+<!-- ======================================================================== -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-bone-dark" aria-label="Productos destacados">
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 pb-4 border-b border-bone-dark">
+    <div>
+      <span class="text-[10px] font-mono tracking-widest-caps uppercase text-dark-muted block">Selección Editorial</span>
+      <h2 class="text-xl sm:text-2xl font-bold uppercase tracking-widest-caps text-dark">
+        Prendas Destacadas
+      </h2>
+    </div>
+    <span class="text-xs font-mono text-dark-muted mt-2 sm:mt-0">
+      Pasa el cursor para ver reverso y seleccionar talla
+    </span>
+  </div>
+
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    {% for product in featured_products %}
+      {% include "partials/product_card.html" with product=product %}
+    {% empty %}
+      <p class="col-span-full py-12 text-center text-xs text-dark-muted">No hay productos destacados en este momento.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ======================================================================== -->
+<!-- SECCIÓN 5: DESTACADO DE COLECCIÓN / DROP 01 -->
+<!-- ======================================================================== -->
+{% if main_drop %}
+<section class="bg-dark text-bone my-16 border-y border-dark-surface" aria-label="Lanzamiento Drop 01">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <!-- Columna Texto -->
+      <div class="lg:col-span-7 space-y-6">
+        <span class="text-[11px] font-mono tracking-widest-caps uppercase text-bone/60 block">
+          Lanzamiento Exclusivo // Unidades Limitadas
+        </span>
+        <h2 class="text-3xl sm:text-4xl font-bold uppercase tracking-widest-caps text-bone leading-tight">
+          {{ main_drop.name }}
+        </h2>
+        <p class="text-sm text-bone-dark/80 leading-relaxed max-w-xl">
+          {{ main_drop.description }}
+        </p>
+        <div class="pt-4">
+          <a href="{{ main_drop.get_absolute_url }}" class="inline-flex items-center justify-center bg-bone text-dark px-8 py-4 text-xs font-bold tracking-wider-label uppercase hover:bg-white transition-colors duration-200">
+            Explorar las Piezas del Drop &rarr;
+          </a>
+        </div>
+      </div>
+
+      <!-- Columna Gráfica: Prenda del Drop -->
+      <div class="lg:col-span-5 flex justify-center">
+        <div class="w-full max-w-sm aspect-[4/5] bg-dark-surface p-8 border border-bone-dark/20 flex items-center justify-center">
+          <div class="w-full h-full transform hover:scale-105 transition-transform duration-500 ease-editorial">
+            {% include "partials/garment_svg.html" with type="hoodie" color="#33261D" view="front" %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ======================================================================== -->
+<!-- SECCIÓN 6: NUEVOS LANZAMIENTOS -->
+<!-- ======================================================================== -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16" aria-label="Nuevas incorporaciones">
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 pb-4 border-b border-bone-dark">
+    <div>
+      <span class="text-[10px] font-mono tracking-widest-caps uppercase text-dark-muted block">Recién Llegadas</span>
+      <h2 class="text-xl sm:text-2xl font-bold uppercase tracking-widest-caps text-dark">
+        Nuevos Lanzamientos
+      </h2>
+    </div>
+    <a href="{% url 'catalog:product_list' %}?orden=recientes" class="btn-link mt-2 sm:mt-0">
+      Ver Todas las Novedades &rarr;
+    </a>
+  </div>
+
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    {% for product in new_arrivals %}
+      {% include "partials/product_card.html" with product=product %}
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ======================================================================== -->
+<!-- SECCIÓN 7: MANIFIESTO DE CONFECCIÓN DE NORTE STUDIO -->
+<!-- ======================================================================== -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-bone-dark" aria-label="Manifiesto">
+  <div class="bg-bone-light border border-bone-dark p-8 sm:p-14 text-center max-w-4xl mx-auto space-y-6">
+    <div class="w-12 h-12 mx-auto text-dark">
+      {% include "partials/favicon_icon_svg.html" %}
+    </div>
+    <span class="text-[10px] font-mono tracking-widest-caps uppercase text-dark-muted block">
+      Nuestra Filosofía de Taller
+    </span>
+    <h2 class="text-2xl sm:text-3xl font-bold uppercase tracking-widest-caps text-dark">
+      Confección Pesada Sin Compromisos
+    </h2>
+    <p class="text-xs sm:text-sm text-dark-muted leading-relaxed max-w-2xl mx-auto">
+      No creemos en las telas ligeras que se deforman tras el primer lavado ni en los cortes que dependen de tendencias efímeras. Diseñamos prendas estructuradas con algodón peinado de máxima densidad, ribetes indeformables y costuras reforzadas pensadas para acompañar la vida urbana en Chile.
+    </p>
+    <div class="pt-4">
+      <a href="{% url 'core:about' %}" class="btn-link">
+        Conoce Más Sobre Nuestro Proceso &rarr;
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================== -->
+<!-- SECCIÓN 8: RESEÑAS VERIFICADAS DE CLIENTES CHILENOS -->
+<!-- ======================================================================== -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-bone-dark" aria-label="Reseñas de la comunidad">
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 pb-4 border-b border-bone-dark">
+    <div>
+      <span class="text-[10px] font-mono tracking-widest-caps uppercase text-dark-muted block">Comunidad NORTE</span>
+      <h2 class="text-xl sm:text-2xl font-bold uppercase tracking-widest-caps text-dark">
+        Opiniones Verificadas en Chile
+      </h2>
+    </div>
+    <a href="{% url 'catalog:reviews_list' %}" class="btn-link mt-2 sm:mt-0">
+      Leer Todas las Reseñas &rarr;
+    </a>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for review in highlight_reviews %}
+      {% include "partials/review_card.html" with review=review %}
+    {% endfor %}
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,71 @@
+{# templates/catalog/reviews.html #}
+{# Propósito: Página editorial de opiniones y testimonios de la comunidad de clientes en Chile #}
+{# Espera: reviews, page_obj, is_paginated #}
+
+{% extends "base.html" %}
+
+{% block meta_title %}Opiniones y Reseñas Verificadas // NORTE Studio Chile{% endblock %}
+{% block meta_description %}Lee lo que nuestra comunidad en Santiago, Valparaíso, Concepción y todo Chile dice sobre el gramaje, calce y calidad de nuestras prendas streetwear.{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 select-none">
+
+  <!-- Encabezado Editorial -->
+  <header class="mb-12 pb-6 border-b border-bone-dark">
+    <span class="text-[10px] font-mono tracking-widest-caps uppercase text-dark-muted block">Transparencia y Calidad</span>
+    <h1 class="text-3xl sm:text-4xl font-bold uppercase tracking-widest-caps text-dark mt-1">
+      Opiniones de la Comunidad
+    </h1>
+    <p class="text-xs sm:text-sm text-dark-muted mt-2 max-w-xl">
+      Comentarios directos de clientes verificados que visten nuestras frisas de 450 GSM y poleras boxy a lo largo de todo Chile.
+    </p>
+
+    <!-- Resumen de Métricas -->
+    <div class="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-bone-light border border-bone-dark text-center">
+      <div>
+        <span class="text-2xl font-mono font-bold text-dark block">5.0 / 5.0</span>
+        <span class="text-[10px] font-mono uppercase text-dark-muted">Promedio General</span>
+      </div>
+      <div>
+        <span class="text-2xl font-mono font-bold text-dark block">100%</span>
+        <span class="text-[10px] font-mono uppercase text-dark-muted">Compras Verificadas</span>
+      </div>
+      <div>
+        <span class="text-2xl font-mono font-bold text-dark block">450+ GSM</span>
+        <span class="text-[10px] font-mono uppercase text-dark-muted">Algodón Pesado</span>
+      </div>
+      <div>
+        <span class="text-2xl font-mono font-bold text-dark block">Todo Chile</span>
+        <span class="text-[10px] font-mono uppercase text-dark-muted">Despachos Asegurados</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Grilla de Reseñas -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for review in reviews %}
+      {% include "partials/review_card.html" with review=review %}
+    {% empty %}
+      <p class="col-span-full py-12 text-center text-xs text-dark-muted">No hay reseñas disponibles actualmente.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Paginación -->
+  {% if is_paginated %}
+    <nav aria-label="Navegación de reseñas" class="mt-16 pt-8 border-t border-bone-dark flex items-center justify-between text-xs font-mono uppercase">
+      <div>
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}" class="btn-secondary py-2 px-4 text-xs">&larr; Anteriores</a>
+        {% endif %}
+      </div>
+      <span class="text-dark-muted">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+      <div>
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}" class="btn-secondary py-2 px-4 text-xs">Siguientes &rarr;</a>
+        {% endif %}
+      </div>
+    </nav>
+  {% endif %}
+
+</div>
+{% endblock %}

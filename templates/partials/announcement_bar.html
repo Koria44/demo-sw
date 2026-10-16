@@ -1,0 +1,22 @@
+{# templates/partials/announcement_bar.html #}
+{# Propósito: Barra superior de avisos rotativos con mensajes de logística y promociones para Chile #}
+
+<div class="bg-dark text-bone text-[11px] font-mono tracking-wider-label uppercase overflow-hidden border-b border-dark/20 h-9 flex items-center justify-center relative z-40 select-none">
+  <div class="max-w-7xl mx-auto px-4 w-full flex items-center justify-center text-center">
+    <!-- Mensaje 1: Despacho Gratis -->
+    <div data-announcement-item class="transition-all duration-300 ease-editorial flex items-center space-x-2">
+      <span class="w-1.5 h-1.5 rounded-full bg-accent animate-ping inline-block"></span>
+      <span>DESPACHO GRATUITO A TODO CHILE POR COMPRAS SOBRE <strong>$70.000 CLP</strong></span>
+    </div>
+
+    <!-- Mensaje 2: Drop 01 -->
+    <div data-announcement-item class="hidden transition-all duration-300 ease-editorial">
+      <span>NUEVO LANZAMIENTO // <strong>DROP 01 - INVIERNO AUSTRAL</strong> YA DISPONIBLE</span>
+    </div>
+
+    <!-- Mensaje 3: Descuento Newsletter -->
+    <div data-announcement-item class="hidden transition-all duration-300 ease-editorial">
+      <span>10% OFF EN TU PRIMERA COMPRA CON EL CÓDIGO <strong>NORTE10</strong></span>
+    </div>
+  </div>
+</div>
