@@ -5,7 +5,10 @@ Expone la aplicación WSGI invocable como una variable a nivel de módulo llamad
 import os
 from django.core.wsgi import get_wsgi_application
 
-# Carga la configuración base o la definida en el entorno
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.dev')
+# Detecta automáticamente si está en Render o en producción
+if os.environ.get('DJANGO_ENV') == 'production' or os.environ.get('RENDER'):
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.prod')
+else:
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.dev')
 
 application = get_wsgi_application()

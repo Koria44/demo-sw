@@ -9,8 +9,11 @@ import sys
 
 def main():
     """Ejecuta tareas administrativas de Django."""
-    # Selecciona el entorno de configuración (por defecto dev para desarrollo local)
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.dev')
+    # Selecciona el entorno de configuración (prod si está en Render, dev para local)
+    if os.environ.get('DJANGO_ENV') == 'production' or os.environ.get('RENDER'):
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.prod')
+    else:
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.dev')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
